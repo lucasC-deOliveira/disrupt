@@ -14,16 +14,7 @@ export default function Baralho() {
   return (
     <section className="w-full pl-16 pr-16 ">
       <div className="w-full  rounded-md flex flex-col items-center justify-center  px-96 gap-8 ">
-      <div className="w-full flex justify-between ">
-          <Link
-            className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center"
-            style={{ borderColor: theme.color, color: theme.color }}
-            href="/provas/baralho/1"
-          >
-            <PiStudentFill className="w-8 h-8" style={{fill:theme.color}} />
-            Estudar
-          </Link>
-          
+      <div className="w-full flex justify-end "> 
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
@@ -64,7 +55,7 @@ export default function Baralho() {
                 />
               </div>
               <h2
-                className="text-center text-4xl font-bold my-4"
+                className="text-center text-4xl font-bold mt-4 mb-8"
                 style={{ color: theme.color }}
               >
                 Fisica
@@ -123,7 +114,7 @@ export default function Baralho() {
             style={{ borderColor: theme.color, color: theme.color }}
             href="/provas/baralho/1"
           >
-            <LuPencilLine className="w-8 h-8" style={{fill:theme.color}} />
+            <LuPencilLine className="w-6 h-6" style={{fill:theme.color}} />
             Editar
           </Link>
           <Link
@@ -131,9 +122,17 @@ export default function Baralho() {
             style={{ borderColor: theme.color, color: theme.color }}
             href="/provas/baralho/1"
           >
-            <FaRegTrashAlt className="w-8 h-8" style={{fill:theme.color}} />
+            <FaRegTrashAlt className="w-6 h-6" style={{fill:theme.color}} />
             Apagar
             
+          </Link>
+          <Link
+            className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center"
+            style={{ borderColor: theme.color, color: theme.color }}
+            href="/cartoes/baralho/1/estudar"
+          >
+            <PiStudentFill className="w-8 h-8" style={{fill:theme.color}} />
+            Estudar
           </Link>
           
         </div>
