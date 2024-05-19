@@ -2,6 +2,7 @@
 import { useTheme } from "@/app/hooks/useTheme";
 import { Ribeye_Marrow } from "next/font/google";
 import Link from "next/link"
+import { useEffect, useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { GiBoomerangSun } from "react-icons/gi"
@@ -15,11 +16,23 @@ const ribeye_Marrow = Ribeye_Marrow({
 
 export const Sidebar = () => {
   const {theme} = useTheme()
-  // const height = window?.innerHeight - 200
-  // console.log(height)
+const [height, setHeight] = useState(1000);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setHeight(window?.innerHeight | 0);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  
     return (
-        <aside className="col-span-2 row-span-12">
-        <nav className=" border-2  rounded-md" style={{borderColor:theme.color}}>
+        <aside className="col-span-2 row-span-12" style={{height:height-150+ "px"}}>
+        <nav className=" border-2  rounded-md h-full" style={{borderColor:theme.color}}>
           <div className="flex gap-4 items-center p-4 ">
             <button type="button" className="rounded-full border-2 w-8 h-8 flex items-center justify-center" style={{borderColor:theme.color}}>
             <GiBoomerangSun  className="h-12 width-12 animate-spin" style={{fill:theme.color}}/>
