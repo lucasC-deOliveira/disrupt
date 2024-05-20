@@ -9,23 +9,22 @@ interface QuestionType {
 }
 
 interface Choice {
-    content:string,
-    isAnswer:boolean
+  content: string;
+  isAnswer: boolean;
 }
 
-interface Question{
-    statement:string,
-    type: QuestionType["type"],
-    choises:Choice[]
-    complement: {type:string, content:any, order:number}[]
+interface Question {
+  statement: string;
+  type: QuestionType["type"];
+  choises: Choice[];
+  complement: { type: string; content: any; order: number }[];
 }
-
 
 interface Exam {
-    photo?:string,
-    name:string,
-    description:string
-    questions: Question[]
+  photo?: string;
+  name: string;
+  description: string;
+  questions: Question[];
 }
 
 export default function CadastrarProva() {
@@ -35,14 +34,13 @@ export default function CadastrarProva() {
 
   const [title, setTitle] = useState("Cadastro de prova");
 
-  const [questions, setQuestion] = useState<Question[]>([])
+  const [questions, setQuestion] = useState<Question[]>([]);
 
-  const [choices, setChoices] = useState<Choice[]>([])
+  const [choices, setChoices] = useState<Choice[]>([]);
 
   const [questionType, setQuestionType] = useState<QuestionType>({
     type: "Mult",
   });
-
 
   const handleChageQuestionType = (questionType: QuestionType) => {
     setQuestionType(questionType);
@@ -171,7 +169,14 @@ export default function CadastrarProva() {
               </div>
               <h4 style={{ color: theme.color }}>
                 Alternativas /{" "}
-                <select className="bg-transparent backdrop:filter-none" onChange={(e) => { if(e.target.value === 'Mult' || e.target.value === "C/E") {handleChageQuestionType({type:e.target.value})}}}>
+                <select
+                  className="bg-transparent backdrop:filter-none"
+                  onChange={(e) => {
+                    if (e.target.value === "Mult" || e.target.value === "C/E") {
+                      handleChageQuestionType({ type: e.target.value });
+                    }
+                  }}
+                >
                   <option value={"Mult"}> Multipla escolha</option>
                   <option value={"C/E"}>Certo Errado</option>
                 </select>

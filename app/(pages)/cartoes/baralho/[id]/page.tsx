@@ -7,9 +7,43 @@ import { PiStudentFill } from "react-icons/pi";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuPencilLine } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Baralho() {
+interface Deck {
+  id: string;
+  photo: string;
+  title: string;
+  cards:[]
+}
+
+export default function Baralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
+
+  const [deck,setDeck] = useState<Deck>({} as Deck)
+
+  const {replace} = useRouter()
+
+  useEffect(()=>{
+    const decksData = JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || []
+
+    const deckData = decksData.find((x:Deck) => x.id === params.id)
+
+    if(deckData){
+      setDeck(deckData)
+    }
+
+  },[])
+
+  const handleDelete = () => {
+    const decksData = JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || []
+
+    const newDecksData = decksData.filter((x:Deck) => x.id !== params.id)
+
+    localStorage.setItem("@Disrupt/Baralhos",JSON.parse(newDecksData))
+    
+    replace("/cartoes")
+  }
 
   return (
     <section className="w-full pl-16 pr-16 ">
@@ -47,8 +81,8 @@ export default function Baralho() {
                 style={{ borderColor: theme.color }}
               >
                 <Image
-                  src={girl.src}
-                  alt="girl"
+                  src={deck.photo}
+                  alt="foto do baralho"
                   width={44}
                   height={90}
                   className="w-full h-66 rounded-md"
@@ -117,15 +151,15 @@ export default function Baralho() {
             <LuPencilLine className="w-6 h-6" style={{fill:theme.color}} />
             Editar
           </Link>
-          <Link
+          <button
             className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
-            href="/provas/baralho/1"
+            type="button"
+            onClick={handleDelete}
           >
             <FaRegTrashAlt className="w-6 h-6" style={{fill:theme.color}} />
             Apagar
-            
-          </Link>
+          </button>
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
