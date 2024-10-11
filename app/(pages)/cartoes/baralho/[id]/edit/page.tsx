@@ -1,39 +1,63 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
-import { gql, useMutation } from "@apollo/client";
 
-export const CREATE_DECK = gql`
-  mutation CreateDeck($data: CreateDeckInput!) {
-    createDeck(data: $data) {
-      id
-      title
-      photo
-    }
-  }
-`;
 
-export default function CadastrarBaralho() {
+interface Card {
+  title:string,
+  photo:string,
+  answer:string
+  evaluation:string
+}
+
+interface Deck {
+  id: string;
+  photo: string;
+  title: string;
+  cards: Card;
+}
+
+export default function EditarBaralho({ params }: { params: { id: string }} ) {
   const { theme } = useTheme();
 
-  const [createDeck, { data, loading, error }] = useMutation(CREATE_DECK);
-
-  const [photo, setPhoto] = useState<File | null>(null);
+  const [photo, setPhoto] = useState("");
 
   const [title, setTitle] = useState("");
 
   const [sucessModalIsOpen, setSucessModalIsOpen] = useState(false);
 
-  const { replace } = useRouter();
+  const {replace} = useRouter()
 
+  let cards:Card[] = []
+
+  const {id} = params
+
+  useEffect(() => {
+    let decks =
+      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
+
+      const deck = decks.find((deck:Deck) => deck.id === id)
+
+      if(deck){
+        cards = deck.cards
+        setPhoto(deck.photo)
+        setTitle(deck.title)
+      }
+  },[])
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
     if (arquivoSelecionado) {
-      setPhoto(arquivoSelecionado);
+    const reader = new FileReader();
+      reader.onload = () => {
+        setPhoto(String(reader.result))
+      };
+     reader.readAsDataURL(arquivoSelecionado);
+
     }
   };
 
@@ -44,34 +68,43 @@ export default function CadastrarBaralho() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      createDeck({ variables: { data: { photo: reader.result, title } } })
-        .then((result) => {
-          setSucessModalIsOpen(true);
 
-          setTimeout(() => {
-            handleCloseSuccessModal();
-            replace("/cartoes");
-          }, 2000);
-        })
-        .catch((e) => console.log("createDeckError", e.message));
-    };
-    photo && reader.readAsDataURL(photo);
+    let decks =
+      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
+
+  
+      const deck = decks.find(x => x.id === id)
+
+      if(deck){
+        deck.photo = photo
+        deck.title = title
+        deck.cards = cards
+      }
+
+      localStorage.setItem("@Disrupt/Baralhos", JSON.stringify(decks));
+    
+
+    setSucessModalIsOpen(true)
+
+    setTimeout(()=> {
+      handleCloseSuccessModal()
+      replace(`/cartoes/baralho/${id}`)
+    },2000)
+
   };
 
   return (
     <section className="w-full pl-16 pr-16  ">
       <h3 className="text-2xl text-center" style={{ color: theme.color }}>
-        Criar Baralho
+        Editar Baralho
       </h3>
       <div
-        className="w-full   flex flex-col items-center justify-center py-16  gap-8  "
+        className="w-full   flex flex-col items-center justify-center py-16  px-96 gap-8  "
         style={{ borderColor: theme.color, color: theme.color }}
       >
-        <form className="w-full " method="Post" onSubmit={handleSubmit}>
+        <form className="w-full" method="Post" onSubmit={handleSubmit}>
           <div
-            className="w-96 m-auto border-2 rounded-2xl px-8 pt-24  "
+            className="w-full border-2 rounded-2xl px-8 pt-24  "
             style={{
               borderColor: theme.color,
               color: theme.color,
@@ -86,7 +119,7 @@ export default function CadastrarBaralho() {
               {photo && (
                 <Image
                   alt="foto do baralho"
-                  src={URL.createObjectURL(photo)}
+                  src={photo}
                   width={500}
                   height={300}
                   className="w-full h-full rounded-md"
@@ -127,7 +160,7 @@ export default function CadastrarBaralho() {
               style={{ borderColor: theme.color, color: theme.color }}
               type="submit"
             >
-              Criar
+              Editar
             </button>
           </div>
         </form>
@@ -135,7 +168,7 @@ export default function CadastrarBaralho() {
       <SucessModal
         closeModal={handleCloseSuccessModal}
         isOpen={sucessModalIsOpen}
-        message="Baralho criado com sucesso!"
+        message="Baralho editado com sucesso!"
       />
     </section>
   );

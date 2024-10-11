@@ -10,18 +10,49 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeleteModal } from "@/app/componens/DeleteModal";
 import { SucessModal } from "@/app/componens/SuccessModal";
+import { gql, useQuery } from "@apollo/client";
+import dayjs from "dayjs";
+
+interface Card {
+  answer: string;
+  photo: string;
+  title: string;
+  deckId: string;
+  showDataTime: string;
+  type: string;
+  evaluation: string;
+  times: number;
+}
 
 interface Deck {
   id: string;
   photo: string;
   title: string;
-  cards: [];
+  cards: Card[];
 }
+const GET_DECK_BY_ID = gql`
+  query GetDeckById($id: String!) {
+    getDeckById(id: $id) {
+      id
+      title
+      photo
+      cards {
+        times
+        evaluation
+        showDataTime
+      }
+    }
+  }
+`;
 
 export default function Baralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
 
   const [deck, setDeck] = useState<Deck>({} as Deck);
+
+  const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
+    variables: { id: params.id },
+  });
 
   const { replace } = useRouter();
 
@@ -38,15 +69,16 @@ export default function Baralho({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    const decksData =
-      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
-
-    const deckData = decksData.find((x: Deck) => x.id === params.id);
-
-    if (deckData) {
-      setDeck(deckData);
+    if (data) {
+      if (data?.getDeckById) {
+        const newDeck = data.getDeckById;
+        setDeck(newDeck);
+      }
+      if (error?.message === "Failed to fetch") {
+        refetch();
+      }
     }
-  }, []);
+  }, [data, error?.message, refetch]);
 
   const handleDelete = () => {
     const decksData =
@@ -79,7 +111,10 @@ export default function Baralho({ params }: { params: { id: string } }) {
         isOpen={successModalIsOpen}
         message="Baralho removido com sucesso!"
       />
-      <div className="w-full  rounded-md flex flex-col items-center justify-center  px-96 gap-8 ">
+      <div
+        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto"
+        style={{ width: 500 }}
+      >
         <div className="w-full flex justify-end ">
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
@@ -112,7 +147,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
                 </h6>
               </div>
               <div
-                className="flex items-center justify-center h-96  rounded-md border-2  mb-8"
+                className="flex w-full items-center justify-center h-96  rounded-md border-2  mb-8"
                 style={{ borderColor: theme.color }}
               >
                 <Image
@@ -141,7 +176,8 @@ export default function Baralho({ params }: { params: { id: string } }) {
                     className="text-2xl font-bold"
                     style={{ color: theme.color }}
                   >
-                    5
+                    {deck?.cards?.filter((card) => card.times === 0).length ||
+                      0}
                   </h6>
                 </div>
                 <div className="flex flex-col items-center justify-center">
@@ -155,7 +191,14 @@ export default function Baralho({ params }: { params: { id: string } }) {
                     className="text-2xl font-bold"
                     style={{ color: theme.color }}
                   >
-                    6
+                    {deck?.cards?.filter(
+                      (card) =>
+                        (card.times > 0 &&
+                          new Date(card.showDataTime).getTime() <=
+                            new Date().getTime() &&
+                          card.evaluation == "Very Hard") ||
+                        card.evaluation == "Hard"
+                    ).length || 0}
                   </h6>
                 </div>
                 <div className="flex flex-col items-center justify-center">
@@ -169,7 +212,16 @@ export default function Baralho({ params }: { params: { id: string } }) {
                     className="text-2xl font-bold"
                     style={{ color: theme.color }}
                   >
-                    5
+                    {
+                      deck?.cards?.filter(
+                        (card) =>
+                          new Date(card.showDataTime).getTime() <=
+                            new Date().getTime() &&
+                          card.times > 0 &&
+                          (card.evaluation === "Normal" ||
+                            card.evaluation === "Easy")
+                      ).length
+                    }
                   </h6>
                 </div>
               </div>
@@ -180,7 +232,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
-            href="/provas/baralho/1"
+            href={`/cartoes/baralho/${params.id}/edit`}
           >
             <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
             Editar
@@ -197,7 +249,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
-            href="/cartoes/baralho/1/estudar"
+            href={`/cartoes/baralho/${params.id}/estudar`}
           >
             <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
             Estudar
