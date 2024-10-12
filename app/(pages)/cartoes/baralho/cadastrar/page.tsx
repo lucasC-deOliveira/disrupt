@@ -7,7 +7,7 @@ import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
 
-export const CREATE_DECK = gql`
+const CREATE_DECK = gql`
   mutation CreateDeck($data: CreateDeckInput!) {
     createDeck(data: $data) {
       id

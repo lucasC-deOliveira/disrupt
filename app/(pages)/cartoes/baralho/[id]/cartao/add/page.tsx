@@ -25,7 +25,7 @@ interface Deck {
   cards: Card[];
 }
 
-export const CREATE_CARD = gql`
+ const CREATE_CARD = gql`
   mutation CreateCard($data: CreateCardInput!) {
     createCard(data: $data) {
       id

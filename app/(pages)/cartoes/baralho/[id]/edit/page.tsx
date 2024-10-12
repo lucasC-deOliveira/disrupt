@@ -6,12 +6,11 @@ import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 
-
 interface Card {
-  title:string,
-  photo:string,
-  answer:string
-  evaluation:string
+  title: string;
+  photo: string;
+  answer: string;
+  evaluation: string;
 }
 
 interface Deck {
@@ -21,7 +20,7 @@ interface Deck {
   cards: Card;
 }
 
-export default function EditarBaralho({ params }: { params: { id: string }} ) {
+export default function EditarBaralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
 
   const [photo, setPhoto] = useState("");
@@ -30,34 +29,33 @@ export default function EditarBaralho({ params }: { params: { id: string }} ) {
 
   const [sucessModalIsOpen, setSucessModalIsOpen] = useState(false);
 
-  const {replace} = useRouter()
+  const { replace } = useRouter();
 
-  let cards:Card[] = []
+  let cards: Card[] = [];
 
-  const {id} = params
+  const { id } = params;
 
   useEffect(() => {
     let decks =
       JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
 
-      const deck = decks.find((deck:Deck) => deck.id === id)
+    const deck = decks.find((deck: Deck) => deck.id === id);
 
-      if(deck){
-        cards = deck.cards
-        setPhoto(deck.photo)
-        setTitle(deck.title)
-      }
-  },[])
-  
+    if (deck) {
+      cards = deck.cards;
+      setPhoto(deck.photo);
+      setTitle(deck.title);
+    }
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
     if (arquivoSelecionado) {
-    const reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = () => {
-        setPhoto(String(reader.result))
+        setPhoto(String(reader.result));
       };
-     reader.readAsDataURL(arquivoSelecionado);
-
+      reader.readAsDataURL(arquivoSelecionado);
     }
   };
 
@@ -68,29 +66,25 @@ export default function EditarBaralho({ params }: { params: { id: string }} ) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-
-    let decks =
+    let decks: { photo: string; title: string; cards: any; id: string }[] =
       JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
 
-  
-      const deck = decks.find(x => x.id === id)
+    const deck = decks.find((x) => x.id === id);
 
-      if(deck){
-        deck.photo = photo
-        deck.title = title
-        deck.cards = cards
-      }
+    if (deck) {
+      deck.photo = photo;
+      deck.title = title;
+      deck.cards = cards;
+    }
 
-      localStorage.setItem("@Disrupt/Baralhos", JSON.stringify(decks));
-    
+    localStorage.setItem("@Disrupt/Baralhos", JSON.stringify(decks));
 
-    setSucessModalIsOpen(true)
+    setSucessModalIsOpen(true);
 
-    setTimeout(()=> {
-      handleCloseSuccessModal()
-      replace(`/cartoes/baralho/${id}`)
-    },2000)
-
+    setTimeout(() => {
+      handleCloseSuccessModal();
+      replace(`/cartoes/baralho/${id}`);
+    }, 2000);
   };
 
   return (
