@@ -30,7 +30,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           <Sidebar />
-          <main className="col-span-10">{children}</main>
+          <main className="col-span-12 md:col-span-8 lg:col-span-10">{children}</main>
           <div className="absolute top-32 right-8">
             <ConfigButton />
           </div>

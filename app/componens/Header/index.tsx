@@ -62,17 +62,15 @@ export const Header = () => {
   }, [handleResetByTimeCycle, timeCicle]);
   return (
     <header className="col-span-12 mb-4 ">
-      <div className="flex justify-between items-center">
-        <div>
-          <Link
-            href={""}
-            style={{ color: theme.color }}
-            className="flex gap-2 items-center"
-          >
-            <BiSolidHomeHeart style={{ fill: theme.color }} /> Home /{" "}
-            <GrGroup /> Social / <BsSignpostSplit /> Publicações
-          </Link>
-        </div>
+      <div className="flex justify-end md:justify-between items-center">
+        <Link
+          href={""}
+          style={{ color: theme.color }}
+          className="md:flex gap-2 items-center hidden"
+        >
+          <BiSolidHomeHeart style={{ fill: theme.color }} /> Home / <GrGroup />{" "}
+          Social / <BsSignpostSplit /> Publicações
+        </Link>
         <div className=" flex gap-6 items-center">
           <div
             className="flex gap-2 items-center justify-center font-bold h-full"
@@ -83,7 +81,7 @@ export const Header = () => {
                 setShowTimer((oldState) => {
                   if (!oldState === false) {
                     setPause(true);
-                    // handleResetByTimeCycle();
+                    // handeResetByTimeCycle();
                   } else {
                     setPause(false);
                   }
@@ -144,7 +142,7 @@ export const Header = () => {
       </div>
       <h1
         style={{ color: theme.color }}
-        className={"mt-4 text-4xl " + ribeye_Marrow.className}
+        className={"md:mt-4 -mt-8 text-2xl md:text-4xl " + ribeye_Marrow.className}
       >
         Publicações
       </h1>

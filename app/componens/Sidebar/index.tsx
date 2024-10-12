@@ -31,13 +31,13 @@ const [height, setHeight] = useState(1000);
 
   
     return (
-        <aside className="col-span-2 row-span-12" style={{height:height-150+ "px"}}>
+        <aside className="col-span-3 lg:col-span-2 row-span-12  hidden md:block " style={{height:height-150+ "px"}}>
         <nav className=" border-2  rounded-md h-full" style={{borderColor:theme.color}}>
           <div className="flex gap-4 items-center p-4 ">
-            <button type="button" className="rounded-full border-2 w-8 h-8 flex items-center justify-center" style={{borderColor:theme.color}}>
+            <button type="button" className="rounded-full border-2 w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center" style={{borderColor:theme.color}}>
             <GiBoomerangSun  className="h-12 width-12 animate-spin" style={{fill:theme.color}}/>
             </button>
-          <h2 style={{color:theme.color}} className={"text-2xl "+ ribeye_Marrow.className}>
+          <h2 style={{color:theme.color}} className={"text-xl lg:text-2xl "+ ribeye_Marrow.className}>
            Disrupt
             </h2>
           </div>

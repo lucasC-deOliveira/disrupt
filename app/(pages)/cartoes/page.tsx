@@ -43,7 +43,6 @@ export default function Cartoes() {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       if (data?.getAllDecks) {
         const newDecks = data.getAllDecks;
         setDecks(newDecks);
@@ -52,11 +51,11 @@ export default function Cartoes() {
         refetch();
       }
     }
-  }, [data, error]);
+  }, [data, error, refetch]);
 
   return (
-    <section className="w-full pl-16 pr-16  ">
-      <div className="flex items-center justify-center mb-4 relative">
+    <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">
+      <div className="flex items-center justify-center flex-col lg:flex-row mb-4 mx-auto relative">
         <h4
           className="text-2xl my-4 text-center"
           style={{ color: theme.color }}
@@ -64,7 +63,7 @@ export default function Cartoes() {
           Baralhos
         </h4>
         <Link
-          className=" w-44 p-2 border-2 rounded-md flex gap-4 absolute right-0 items-center justify-center self-end"
+          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end"
           style={{ borderColor: theme.color, color: theme.color }}
           href="/cartoes/baralho/cadastrar"
         >
@@ -72,9 +71,36 @@ export default function Cartoes() {
           Novo Baralho
         </Link>
       </div>
-      <div className="w-full  rounded-md grid grid-cols-4 gap-4 ">
+      <div className="w-full  rounded-md grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">
+        <Link
+          href={"cartoes/baralho/cadastrar"}
+          className=" border-2 rounded-md  pr-1"
+          style={{ borderColor: theme.color }}
+        >
+          <div
+            className=" border-2 rounded-md h-full  pr-1"
+            style={{ borderColor: theme.color }}
+          >
+            <div
+              className=" border-2 rounded-md  h-full  p-8 flex flex-col items-center gap-4"
+              style={{ borderColor: theme.color }}
+            >
+              <div className="flex items-center justify-center w-full ">
+                <AiOutlinePlus
+                  className="w-72 h-72 "
+                  style={{ fill: theme.color }}
+                />
+              </div>
+              <h5
+                className="text-2xl md:text-2xl lg:3xl xl:text-4xl font-bold mb-6 text-center"
+                style={{ color: theme.color }}
+              >
+                Novo Baralho
+              </h5>
+            </div>
+          </div>
+        </Link>
         {decks.map((deck) => {
-          console.log(deck);
           return (
             <Link
               key={deck.id}
@@ -87,11 +113,11 @@ export default function Cartoes() {
                 style={{ borderColor: theme.color }}
               >
                 <div
-                  className=" border-2 rounded-md h-full  p-8"
+                  className=" border-2 rounded-md h-full  p-4"
                   style={{ borderColor: theme.color }}
                 >
                   <div className="flex w-full justify-end mb-4">
-                    <h6 className="text-m" style={{ color: theme.color }}>
+                    <h6 className="text-sm md:text-md mb-4" style={{ color: theme.color }}>
                       CARTÕES {deck.cards?.length || 0}
                     </h6>
                   </div>
@@ -108,26 +134,26 @@ export default function Cartoes() {
                     />
                   </div>
                   <h2
-                    className="text-center text-4xl font-bold my-4"
+                    className="text-center text-2xl md:text-4xl font-bold my-4"
                     style={{ color: theme.color }}
                   >
                     {deck.title}
                   </h2>
-                  <div className="flex w-full justify-between">
+                  <div className="flex w-full justify-between gap-2 md:gap-4 ">
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         Novos
                       </h6>
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         {deck?.cards?.filter((card) => card.times == 0)
                           ?.length || 0}
                       </h6>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         Aprender
                       </h6>
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         {deck?.cards?.filter(
                           (card) =>
                             (card.times > 0 &&
@@ -139,10 +165,10 @@ export default function Cartoes() {
                       </h6>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         Revisar
                       </h6>
-                      <h6 className="text-md" style={{ color: theme.color }}>
+                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
                         {
                           deck?.cards?.filter(
                             (card) =>
@@ -161,33 +187,6 @@ export default function Cartoes() {
             </Link>
           );
         })}
-
-        <Link
-          href={"cartoes/baralho/cadastrar"}
-          className=" border-2 rounded-md  pr-1"
-          style={{ borderColor: theme.color }}
-        >
-          <div
-            className=" border-2 rounded-md h-full  pr-1"
-            style={{ borderColor: theme.color }}
-          >
-            <div
-              className=" border-2 rounded-md  h-full  p-8 flex flex-col items-center gap-4"
-              style={{ borderColor: theme.color }}
-            >
-              <AiOutlinePlus
-                className="w-72 h-72"
-                style={{ fill: theme.color }}
-              />
-              <h5
-                className="text-4xl font-bold mb-6"
-                style={{ color: theme.color }}
-              >
-                Novo Baralho
-              </h5>
-            </div>
-          </div>
-        </Link>
       </div>
     </section>
   );
