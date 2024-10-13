@@ -115,7 +115,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
         className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto"
         style={{ width: 500 }}
       >
-        <div className="w-full flex justify-end ">
+        <div className="w-full flex justify-end gap-2">
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
             style={{ borderColor: theme.color, color: theme.color }}
@@ -123,6 +123,14 @@ export default function Baralho({ params }: { params: { id: string } }) {
           >
             <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
             Adicionar Cartões
+          </Link>
+          <Link
+            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
+            style={{ borderColor: theme.color, color: theme.color }}
+            href={`/cartoes/baralho/${params.id}/cartoes`}
+          >
+            {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
+           Abrir Deck
           </Link>
         </div>
         <div

@@ -138,24 +138,40 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
               className=" border-2 rounded-md w-96 p-8"
               style={{ borderColor: theme.color }}
             >
-              <div
-                className="flex items-center justify-center  rounded-md border-2  my-8"
-                style={{ borderColor: theme.color }}
-              >
-                <Image
-                  src={card?.photo}
-                  alt="card photo"
-                  width={44}
-                  height={90}
-                  className="w-full h-66 rounded-md"
-                />
-              </div>
-              <h2
-                className="text-center text-4xl font-bold my-12"
-                style={{ color: theme.color }}
-              >
-                {card?.title}
-              </h2>
+              {card?.photo && (
+                <>
+                  <div
+                    className="flex items-center justify-center  rounded-md border-2  my-8"
+                    style={{ borderColor: theme.color }}
+                  >
+                    <Image
+                      src={card?.photo}
+                      alt="card photo"
+                      width={44}
+                      height={90}
+                      className="w-full h-66 rounded-md"
+                    />
+                  </div>
+                  <div className="flex items-center justify-center flex-wrap w-full">
+                    <p
+                      className="text-center  text-4xl font-bold my-12 break-words whitespace-normal break-all"
+                      style={{ color: theme.color }}
+                    >
+                      {card?.title}
+                    </p>
+                  </div>
+                </>
+              )}
+              {!card?.photo && (
+                <div className="flex items-center justify-center flex-wrap w-full">
+                  <p
+                    className="text-center  text-4xl font-bold my-40 break-words whitespace-normal break-all"
+                    style={{ color: theme.color }}
+                  >
+                    {card?.title}
+                  </p>
+                </div>
+              )}
               <div className="flex items-center justify-center">
                 <button
                   className="  p-2 border-2 rounded-md text-lg"
@@ -173,17 +189,17 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
               className=" border-2 rounded-md w-96 flex flex-col justify-center items-center  p-8 relative"
               style={{ borderColor: theme.color }}
             >
-              <h4 style={{ color: theme.color }}>{card?.title}</h4>
+              <h4 className=" break-words whitespace-normal break-all" style={{ color: theme.color }}>{card?.title}</h4>
               <hr
                 className="border w-full"
                 style={{ borderColor: theme.color }}
               />
-              <h2
-                className="text-center text-4xl font-semibold my-44"
+              <p
+                className="text-center break-words whitespace-normal break-all text-2xl font-semibold my-44"
                 style={{ color: theme.color }}
               >
                 {card?.answer}
-              </h2>
+              </p>
               <div
                 className="flex items-center justify-between absolute bottom-4 gap-2 w-96
           px-4

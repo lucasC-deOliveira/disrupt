@@ -1,21 +1,16 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 interface Card {
   answer: string;
   photo: string;
   title: string;
-  deckId: string;
-  showDataTime: string;
-  type: string;
-  evaluation: string;
-  times: number;
 }
 
 interface Deck {
@@ -25,18 +20,54 @@ interface Deck {
   cards: Card[];
 }
 
-const CREATE_CARD = gql`
-  mutation CreateCard($data: CreateCardInput!) {
-    createCard(data: $data) {
+const EDIT_CARD = gql`
+  mutation EditCard($data: EditCardInput!) {
+    editCard(data: $data) {
       id
     }
   }
 `;
 
-export default function AdicionarCartao({
+const GET_CARD_BY_ID = gql`
+  query GetCardById($id: String!) {
+    getCardById(id: $id) {
+      answer
+      photo
+      title
+    }
+  }
+`;
+
+function base64ToFile(base64String: string, fileName: string) {
+  // Divida a string base64 em partes (data:...;base64,...)
+  const arr = base64String.split(",");
+  // @ts-ignore
+  const mimeType = arr[0].match(/:(.*?);/); // Extraia o tipo MIME
+  const byteString = atob(arr[1]); // Decodifica a parte base64
+
+  // Converte a string base64 para um array de bytes
+  const byteNumbers = new Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    byteNumbers[i] = byteString.charCodeAt(i);
+  }
+
+  // Crie um array de bytes do tipo Uint8Array
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Crie um Blob a partir do Uint8Array e defina o tipo MIME
+  // @ts-ignore
+
+  const blob = new Blob([byteArray], { type: mimeType });
+
+  // Retorne um objeto File a partir do Blob
+  // @ts-ignore
+  return new File([blob], fileName, { type: mimeType });
+}
+
+export default function EditarCartao({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; cardid: string };
 }) {
   const { theme } = useTheme();
 
@@ -50,7 +81,13 @@ export default function AdicionarCartao({
 
   const [answer, setAnswer] = useState("");
 
-  const [createCard, { data, loading, error }] = useMutation(CREATE_CARD);
+  const [editCard, editControll] = useMutation(EDIT_CARD);
+
+  const [card, setCard] = useState({} as Card);
+
+  const { loading, error, data, refetch } = useQuery(GET_CARD_BY_ID, {
+    variables: { id: params.cardid },
+  });
 
   const [type, setType] = useState<"with image" | "text">("text");
 
@@ -70,17 +107,13 @@ export default function AdicionarCartao({
     if (type == "with image") {
       const reader = new FileReader();
       reader.onload = () => {
-        createCard({
+        editCard({
           variables: {
             data: {
-              photo: reader.result,
+              photo: reader.result == card.photo ? card.photo : reader.result,
               title,
               answer,
-              evaluation: "Very Hard",
-              times: 0,
-              showDataTime: new Date().toISOString(),
-              deckId: params.id,
-              type,
+              id: params.cardid,
             },
           },
         })
@@ -89,7 +122,7 @@ export default function AdicionarCartao({
 
             setTimeout(() => {
               handleCloseSuccessModal();
-              replace("/cartoes/baralho/" + params.id);
+              replace("/cartoes/baralho/" + params.id + "/cartoes");
             }, 2000);
           })
           .catch((e): any => console.log(e.message));
@@ -97,16 +130,12 @@ export default function AdicionarCartao({
       photo && reader.readAsDataURL(photo);
     }
     if (type == "text") {
-      createCard({
+      editCard({
         variables: {
           data: {
             photo: "",
             title,
             answer,
-            evaluation: "Very Hard",
-            times: 0,
-            showDataTime: new Date().toISOString(),
-            deckId: params.id,
             type,
           },
         },
@@ -116,17 +145,39 @@ export default function AdicionarCartao({
 
           setTimeout(() => {
             handleCloseSuccessModal();
-            replace("/cartoes/baralho/" + params.id);
+            replace(`/cartoes/baralho/${params.id}/cartoes`);
           }, 2000);
         })
         .catch((e): any => console.log(e.message));
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      if (data?.getCardById) {
+        const GetCardById = data.getCardById;
+        const newCard: Card = {
+          answer: GetCardById.answer,
+          photo: GetCardById.photo,
+          title: GetCardById.title,
+        };
+        setType(newCard?.photo ? "with image" : "text");
+        newCard?.photo && setPhoto(base64ToFile(newCard.photo, "photo"));
+        setTitle(newCard.title);
+        setAnswer(newCard.answer);
+        setCard(newCard);
+      }
+
+      if (error?.message === "Failed to fetch") {
+        refetch();
+      }
+    }
+  }, [data, error?.message, params.id, refetch]);
+
   return (
     <section className="w-full pl-16 pr-16  ">
       <h3 className="text-2xl text-center mb-8" style={{ color: theme.color }}>
-        Criar Cartão
+        Editar Cartão
       </h3>
       <form
         className="w-full border-2 rounded-lg"
@@ -277,14 +328,14 @@ export default function AdicionarCartao({
             style={{ borderColor: theme.color, color: theme.color }}
             type="submit"
           >
-            Criar
+            Editar
           </button>
         </div>
       </form>
       <SucessModal
         closeModal={handleCloseSuccessModal}
         isOpen={sucessModalIsOpen}
-        message="Cartão criado com sucesso!"
+        message="Cartão editado com sucesso!"
       />
     </section>
   );

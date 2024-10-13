@@ -24,42 +24,82 @@ export const Header = () => {
 
   const [time, setTime] = useState(2);
 
-  const [timeCicle, setTimeCicle] = useState<"work" | "rest">("work");
+  const [showTimer, setShowTimer] = useState(false);
+
+  const [timeCycle, setTimeCycle] = useState<"work" | "rest">("work");
 
   const [pause, setPause] = useState(true);
 
-  const [showTimer, setShowTimer] = useState(false);
-
-  const intervalRef = useRef({} as any);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleResetByTimeCycle = useCallback(() => {
-    if (timeCicle == "work") {
-      setTime(25 * 60);
-    } else {
-      setTime(5 * 60);
+    setTime(timeCycle === "work" ? 25 * 60 : 5 * 60);
+  }, [timeCycle]);
+
+  const startTimer = useCallback(() => {
+    intervalRef.current = setInterval(() => {
+      setTime((prevTime) => prevTime - 1);
+    }, 1000);
+  }, []);
+
+  const stopTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
   }, []);
 
   useEffect(() => {
-    if (!pause && time > 1) {
-      intervalRef.current = setInterval(() => {
-        setTime((prevNum: number) => prevNum - 1);
-      }, 1000);
+    if (!pause) {
+      startTimer();
     } else {
-      if (timeCicle == "work") {
-        setTimeCicle("rest");
-      } else if (timeCicle == "rest") {
-        setTimeCicle("work");
-      }
-      clearInterval(intervalRef.current);
+      stopTimer();
     }
 
-    return () => clearInterval(intervalRef.current);
-  }, [pause]);
+    return stopTimer; // Limpar o intervalo quando o componente desmonta ou pausa muda.
+  }, [pause, startTimer, stopTimer]);
 
   useEffect(() => {
-    handleResetByTimeCycle();
-  }, [handleResetByTimeCycle, timeCicle]);
+    if (time <= 0) {
+      setTimeCycle((prevCycle) => (prevCycle === "work" ? "rest" : "work"));
+      handleResetByTimeCycle();
+      // setPause(true); // Pausa automaticamente ao mudar de ciclo
+    }
+  }, [time, handleResetByTimeCycle]);
+
+  useEffect(() => {
+    handleResetByTimeCycle(); // Ajusta o tempo quando o ciclo muda.
+  }, [timeCycle, handleResetByTimeCycle]);
+
+  // const handleResetByTimeCycle = useCallback(() => {
+  //   if (timeCicle == "work") {
+  //     setTime(25 * 60);
+  //   } else {
+  //     setTime(5 * 60);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!pause && time > 1) {
+  //     intervalRef.current = setInterval(() => {
+  //       setTime((prevNum: number) => prevNum - 1);
+  //     }, 1000);
+  //   } else {
+  //     if (timeCicle == "work") {
+  //       setTimeCicle("rest");
+  //     } else if (timeCicle == "rest") {
+  //       setTimeCicle("work");
+  //     }
+  //     clearInterval(intervalRef.current);
+  //   }
+
+  //   return () => clearInterval(intervalRef.current);
+  // }, [pause]);
+
+  // useEffect(() => {
+  //   handleResetByTimeCycle();
+  // }, [handleResetByTimeCycle, timeCicle]);
+
   return (
     <header className="col-span-12 mb-4 ">
       <div className="flex justify-end md:justify-between items-center">
@@ -121,7 +161,7 @@ export const Header = () => {
                     style={{ fill: theme.color }}
                     onClick={() => setTime(25 * 60)}
                   />
-                  <button onClick={() => setTime(1)}>
+                  <button onClick={() => setTimeCycle((prevCycle) => (prevCycle === "work" ? "rest" : "work"))}>
                     <IoPlaySkipForward
                       className="w-4 h-4"
                       style={{ fill: theme.color }}
@@ -142,7 +182,9 @@ export const Header = () => {
       </div>
       <h1
         style={{ color: theme.color }}
-        className={"md:mt-4 -mt-8 text-2xl md:text-4xl " + ribeye_Marrow.className}
+        className={
+          "md:mt-4 -mt-8 text-2xl md:text-4xl " + ribeye_Marrow.className
+        }
       >
         Publicações
       </h1>
