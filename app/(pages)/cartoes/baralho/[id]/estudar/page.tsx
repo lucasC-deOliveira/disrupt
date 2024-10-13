@@ -2,8 +2,9 @@
 
 import { useTheme } from "@/app/hooks/useTheme";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { PacmanLoader } from "react-spinners";
 
 interface Card {
   answer: string;
@@ -51,6 +52,12 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
 
   const handleShowAnswer = () => {
     setFace("verso");
+  };
+
+  const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: theme.color,
   };
 
   const evalStrategy = {
@@ -127,15 +134,28 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   }, [data, error?.message, params.id, refetch]);
 
   return (
-    <section className="w-full pl-16 pr-16 ">
+    <section className="w-full grid grid-cols-12 pl-16 pr-16 ">
       {loading && (
-        <div className="w-full flex items-center justify-center">...</div>
+        <div
+          className="col-span-12 mt-56 flex flex-col items-center justify-center"
+          style={{ color: theme.color }}
+        >
+          <PacmanLoader
+            color={theme.color}
+            loading={loading}
+            cssOverride={override}
+            size={100}
+            aria-label="Carregando o card!"
+            data-testid="loader"
+          />
+          Carregando o card!...
+        </div>
       )}
       {!loading && card?.title && (
-        <div className="w-full  rounded-md flex flex-col items-center justify-center py-4 gap-8 ">
+        <div className="col-span-12 mt-12 rounded-md flex flex-col items-center justify-center py-4 gap-8 ">
           {face == "frente" && (
             <div
-              className=" border-2 rounded-md w-96 p-8"
+              className=" border-2 rounded-md w-3/4 lg:w-3/6 xl:w-2/6 p-8"
               style={{ borderColor: theme.color }}
             >
               {card?.photo && (
@@ -165,7 +185,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
               {!card?.photo && (
                 <div className="flex items-center justify-center flex-wrap w-full">
                   <p
-                    className="text-center  text-4xl font-bold my-40 break-words whitespace-normal break-all"
+                    className="text-center  text-2xl font-bold my-64  whitespace-normal break-all"
                     style={{ color: theme.color }}
                   >
                     {card?.title}
@@ -186,16 +206,21 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
           )}
           {face == "verso" && (
             <div
-              className=" border-2 rounded-md w-96 flex flex-col justify-center items-center  p-8 relative"
+              className=" border-2 rounded-md w-3/4 lg:w-3/6 xl:w-2/6 flex flex-col justify-center items-center  p-8 relative"
               style={{ borderColor: theme.color }}
             >
-              <h4 className=" break-words whitespace-normal break-all" style={{ color: theme.color }}>{card?.title}</h4>
+              <h4
+                className=" break-words whitespace-normal break-all"
+                style={{ color: theme.color }}
+              >
+                {card?.title}
+              </h4>
               <hr
                 className="border w-full"
                 style={{ borderColor: theme.color }}
               />
               <p
-                className="text-center break-words whitespace-normal break-all text-2xl font-semibold my-44"
+                className="text-center break-words whitespace-normal break-all text-2xl font-semibold my-52"
                 style={{ color: theme.color }}
               >
                 {card?.answer}

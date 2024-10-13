@@ -6,6 +6,9 @@ import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
+import Link from "next/link";
+import { LuFileJson } from "react-icons/lu";
+import { TbJson } from "react-icons/tb";
 
 interface Card {
   answer: string;
@@ -125,9 +128,23 @@ export default function AdicionarCartao({
 
   return (
     <section className="w-full pl-16 pr-16  ">
-      <h3 className="text-2xl text-center mb-8" style={{ color: theme.color }}>
-        Criar Cartão
-      </h3>
+      <div className="flex items-center justify-center flex-col lg:flex-row mb-4 mx-auto relative">
+        <h4
+          className="text-2xl my-4 text-center"
+          style={{ color: theme.color }}
+        >
+          Baralhos
+        </h4>
+        <Link
+          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end"
+          style={{ borderColor: theme.color, color: theme.color }}
+          href="/cartoes/baralho/cadastrar"
+        >
+          <LuFileJson className="w-6 h-6"/>
+          Criar com
+          <TbJson className="w-6 h-6" />
+        </Link>
+      </div>
       <form
         className="w-full border-2 rounded-lg"
         style={{ borderColor: theme.color, color: theme.color }}
