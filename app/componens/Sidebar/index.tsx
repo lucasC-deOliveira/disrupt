@@ -43,12 +43,10 @@ const [height, setHeight] = useState(1000);
           </div>
             <hr className="mx-2" style={{borderColor:theme.color}}/>
             <ul className="p-4 mb-80 flex flex-col gap-4 " style={{color:theme.color}}>
-              <li><Link href="/provas" className="flex gap-4 items-center"><IoDocumentOutline className="w-6 h-6" /> Provas</Link></li>
-              <li><Link href="" className="flex gap-4 items-center"> <FaBook className="w-6 h-6"/>Questões </Link></li>
+              {/* <li><Link href="/provas" className="flex gap-4 items-center"><IoDocumentOutline className="w-6 h-6" /> Provas</Link></li> */}
+              {/* <li><Link href="" className="flex gap-4 items-center"> <FaBook className="w-6 h-6"/>Questões </Link></li> */}
               <li><Link href="/cartoes" className="flex gap-4 items-center"><FaRegPenToSquare className="w-6 h-6" />Cartões</Link></li>
-              <li><Link href="" className="flex gap-4 items-center"><GrGroup className="w-6 h-6"/> Social</Link></li>
-            
-             
+              {/* <li><Link href="" className="flex gap-4 items-center"><GrGroup className="w-6 h-6"/> Social</Link></li>        */}
             </ul>
             </nav>
 

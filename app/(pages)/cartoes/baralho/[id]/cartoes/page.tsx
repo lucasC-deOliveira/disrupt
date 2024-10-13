@@ -1,11 +1,13 @@
 "use client";
 
+import { useMyHeader } from "@/app/hooks/navigation";
 import { useTheme } from "@/app/hooks/useTheme";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
+import { BiSolidHomeHeart } from "react-icons/bi";
 import { DiTravis } from "react-icons/di";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuPencilLine } from "react-icons/lu";
@@ -67,6 +69,22 @@ export default function Cartoes({ params }: { params: { id: string } }) {
       }
     }
   }, [data, error, refetch]);
+  
+  const { changePaths, changeTitle } = useMyHeader();
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   return (
     <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">

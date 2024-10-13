@@ -5,6 +5,9 @@ import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
+import { useMyHeader } from "@/app/hooks/navigation";
 
 interface Card {
   title: string;
@@ -34,6 +37,22 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
   let cards: Card[] = [];
 
   const { id } = params;
+
+  const { changePaths, changeTitle } = useMyHeader();
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   useEffect(() => {
     let decks =

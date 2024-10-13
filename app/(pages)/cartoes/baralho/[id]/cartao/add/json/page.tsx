@@ -12,6 +12,9 @@ import prettier from "prettier/standalone";
 import parserBabel from "prettier/parser-babel";
 
 import JsonFormatter from "react-json-formatter";
+import { useMyHeader } from "@/app/hooks/navigation";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
 
 const AceEditor = dynamic(
   async () => {
@@ -72,82 +75,14 @@ export default function AdicionarCartaoJson({
 }
     `
   );
-  const setText = (value: string) => {
-    try {
-      prettier
-        ?.format(value, {
-          parser: "json",
-          plugins: [parserBabel],
-        })
-        .then((result) => {
-          setMarkdownText(result);
-        });
-    } catch (error) {
-      setMarkdownText(value);
-      console.error("Error formatting code:", error);
-    }
-  };
-
+  
   const handleCloseSuccessModal = () => {
     setSucessModalIsOpen(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // if (type == "with image") {
-    //   const reader = new FileReader();
-    //   reader.onload = () => {
-    //     createCard({
-    //       variables: {
-    //         data: {
-    //           photo: reader.result,
-    //           title,
-    //           answer,
-    //           evaluation: "Very Hard",
-    //           times: 0,
-    //           showDataTime: new Date().toISOString(),
-    //           deckId: params.id,
-    //           type,
-    //         },
-    //       },
-    //     })
-    //       .then((result) => {
-    //         setSucessModalIsOpen(true);
-
-    //         setTimeout(() => {
-    //           handleCloseSuccessModal();
-    //           replace("/cartoes/baralho/" + params.id);
-    //         }, 2000);
-    //       })
-    //       .catch((e): any => console.log(e.message));
-    //   };
-    //   photo && reader.readAsDataURL(photo);
-    // }
-    // if (type == "text") {
-    //   createCard({
-    //     variables: {
-    //       data: {
-    //         photo: "",
-    //         title,
-    //         answer,
-    //         evaluation: "Very Hard",
-    //         times: 0,
-    //         showDataTime: new Date().toISOString(),
-    //         deckId: params.id,
-    //         type,
-    //       },
-    //     },
-    //   })
-    //     .then((result) => {
-    //       setSucessModalIsOpen(true);
-
-    //       setTimeout(() => {
-    //         handleCloseSuccessModal();
-    //         replace("/cartoes/baralho/" + params.id);
-    //       }, 2000);
-    //     })
-    //     .catch((e): any => console.log(e.message));
-    // }
+    
     const obj = JSON.parse(markdownText);
 
     if (Array.isArray(obj?.cards)) {
@@ -185,12 +120,28 @@ export default function AdicionarCartaoJson({
     }
   };
 
+
   const jsonStyle = {
     propertyStyle: { color: theme.color },
     stringStyle: { color: "white" },
     numberStyle: { color: theme.color },
   };
 
+  const { changePaths, changeTitle } = useMyHeader();
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
   return (
     <section className="w-full pl-16 pr-16  ">
       <h3 className="text-2xl text-center mb-8" style={{ color: theme.color }}>

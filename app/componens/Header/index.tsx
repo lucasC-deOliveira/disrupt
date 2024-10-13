@@ -1,4 +1,5 @@
 "use client";
+import { useMyHeader } from "@/app/hooks/navigation";
 import { useTheme } from "@/app/hooks/useTheme";
 import { Ribeye_Marrow, Orbitron } from "next/font/google";
 import Link from "next/link";
@@ -31,6 +32,8 @@ export const Header = () => {
   const [pause, setPause] = useState(true);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { title, paths } = useMyHeader();
 
   const handleResetByTimeCycle = useCallback(() => {
     setTime(timeCycle === "work" ? 25 * 60 : 5 * 60);
@@ -108,8 +111,14 @@ export const Header = () => {
           style={{ color: theme.color }}
           className="md:flex gap-2 items-center hidden"
         >
-          <BiSolidHomeHeart style={{ fill: theme.color }} /> Home / <GrGroup />{" "}
-          Social / <BsSignpostSplit /> Publicações
+          {paths.map(({ Icon, name }, i,k) => (
+            <>
+              <Icon style={{ fill: theme.color }} key={i + "a"} />{" "}
+              <span key={i + "b"}>
+                {name} { (i < k.length-1) && "/"}{" "}
+              </span>
+            </>
+          ))}
         </Link>
         <div className=" flex gap-6 items-center">
           <div
@@ -161,7 +170,13 @@ export const Header = () => {
                     style={{ fill: theme.color }}
                     onClick={() => setTime(25 * 60)}
                   />
-                  <button onClick={() => setTimeCycle((prevCycle) => (prevCycle === "work" ? "rest" : "work"))}>
+                  <button
+                    onClick={() =>
+                      setTimeCycle((prevCycle) =>
+                        prevCycle === "work" ? "rest" : "work"
+                      )
+                    }
+                  >
                     <IoPlaySkipForward
                       className="w-4 h-4"
                       style={{ fill: theme.color }}
@@ -186,7 +201,7 @@ export const Header = () => {
           "md:mt-4 -mt-8 text-2xl md:text-4xl " + ribeye_Marrow.className
         }
       >
-        Publicações
+        {title}
       </h1>
     </header>
   );

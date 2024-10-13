@@ -1,11 +1,13 @@
 "use client";
 
+import { useMyHeader } from "@/app/hooks/navigation";
 import { useTheme } from "@/app/hooks/useTheme";
 import { gql, useQuery } from "@apollo/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
+import { BiSolidHomeHeart } from "react-icons/bi";
 
 interface Card {
   evaluation: string;
@@ -41,6 +43,8 @@ export default function Cartoes() {
 
   const [decks, setDecks] = useState<Deck[]>([]);
 
+  const { changeTitle, changePaths } = useMyHeader();
+
   useEffect(() => {
     if (data) {
       if (data?.getAllDecks) {
@@ -52,6 +56,20 @@ export default function Cartoes() {
       }
     }
   }, [data, error, refetch]);
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   return (
     <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">
@@ -117,7 +135,10 @@ export default function Cartoes() {
                   style={{ borderColor: theme.color }}
                 >
                   <div className="flex w-full justify-end mb-4">
-                    <h6 className="text-sm md:text-md mb-4" style={{ color: theme.color }}>
+                    <h6
+                      className="text-sm md:text-md mb-4"
+                      style={{ color: theme.color }}
+                    >
                       CARTÕES {deck.cards?.length || 0}
                     </h6>
                   </div>
@@ -141,19 +162,31 @@ export default function Cartoes() {
                   </h2>
                   <div className="flex w-full justify-between gap-2 md:gap-4 ">
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         Novos
                       </h6>
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         {deck?.cards?.filter((card) => card.times == 0)
                           ?.length || 0}
                       </h6>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         Aprender
                       </h6>
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         {deck?.cards?.filter(
                           (card) =>
                             (card.times > 0 &&
@@ -165,10 +198,16 @@ export default function Cartoes() {
                       </h6>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         Revisar
                       </h6>
-                      <h6 className="text-sm md:text-md" style={{ color: theme.color }}>
+                      <h6
+                        className="text-sm md:text-md"
+                        style={{ color: theme.color }}
+                      >
                         {
                           deck?.cards?.filter(
                             (card) =>

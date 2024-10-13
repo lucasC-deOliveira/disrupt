@@ -6,6 +6,9 @@ import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
+import { useMyHeader } from "@/app/hooks/navigation";
 
 interface Card {
   answer: string;
@@ -85,6 +88,8 @@ export default function EditarCartao({
 
   const [card, setCard] = useState({} as Card);
 
+  const { changePaths, changeTitle } = useMyHeader();
+
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_ID, {
     variables: { id: params.cardid },
   });
@@ -151,6 +156,20 @@ export default function EditarCartao({
         .catch((e): any => console.log(e.message));
     }
   };
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   useEffect(() => {
     if (data) {

@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
@@ -9,6 +9,9 @@ import { gql, useMutation } from "@apollo/client";
 import Link from "next/link";
 import { LuFileJson } from "react-icons/lu";
 import { TbJson } from "react-icons/tb";
+import { useMyHeader } from "@/app/hooks/navigation";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
 
 interface Card {
   answer: string;
@@ -125,6 +128,22 @@ export default function AdicionarCartao({
         .catch((e): any => console.log(e.message));
     }
   };
+
+  const { changePaths, changeTitle } = useMyHeader();
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   return (
     <section className="w-full pl-16 pr-16  ">

@@ -3,7 +3,7 @@ import { useTheme } from "@/app/hooks/useTheme";
 import Link from "next/link";
 import Image from "next/image";
 import { PiStudentFill } from "react-icons/pi";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuPencilLine } from "react-icons/lu";
 import { useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import { DeleteModal } from "@/app/componens/DeleteModal";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { gql, useQuery } from "@apollo/client";
 import dayjs from "dayjs";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { useMyHeader } from "@/app/hooks/navigation";
 
 interface Card {
   answer: string;
@@ -54,6 +56,8 @@ export default function Baralho({ params }: { params: { id: string } }) {
     variables: { id: params.id },
   });
 
+  const {changePaths,changeTitle} = useMyHeader()
+
   const { replace } = useRouter();
 
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
@@ -79,6 +83,20 @@ export default function Baralho({ params }: { params: { id: string } }) {
       }
     }
   }, [data, error?.message, refetch]);
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  }, [changeTitle, changePaths]);
 
   const handleDelete = () => {
     const decksData =
