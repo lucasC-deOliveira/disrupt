@@ -69,7 +69,8 @@ export default function Cartoes() {
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">

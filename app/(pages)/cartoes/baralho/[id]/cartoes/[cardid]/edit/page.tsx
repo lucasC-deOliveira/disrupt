@@ -169,7 +169,8 @@ export default function EditarCartao({
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (data) {

@@ -1,15 +1,11 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { SetStateAction, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { v4 } from "uuid";
+import { useEffect, useState } from "react";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
 import dynamic from "next/dynamic";
-import { marked } from "marked";
-import prettier from "prettier/standalone";
-import parserBabel from "prettier/parser-babel";
+
 
 import JsonFormatter from "react-json-formatter";
 import { useMyHeader } from "@/app/hooks/navigation";
@@ -141,7 +137,9 @@ export default function AdicionarCartaoJson({
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section className="w-full pl-16 pr-16  ">
       <h3 className="text-2xl text-center mb-8" style={{ color: theme.color }}>

@@ -70,7 +70,8 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const override: CSSProperties = {
     display: "block",

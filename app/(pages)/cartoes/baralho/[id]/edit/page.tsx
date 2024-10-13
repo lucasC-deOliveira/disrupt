@@ -52,7 +52,8 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     let decks =

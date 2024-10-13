@@ -1,11 +1,14 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
+import { useMyHeader } from "@/app/hooks/navigation";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
 
 const CREATE_DECK = gql`
   mutation CreateDeck($data: CreateDeckInput!) {
@@ -59,6 +62,23 @@ export default function CadastrarBaralho() {
     };
     photo && reader.readAsDataURL(photo);
   };
+
+  const { changeTitle, changePaths } = useMyHeader();
+
+  useEffect(() => {
+    changeTitle("Cartões");
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+      },
+    ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="w-full pl-16 pr-16  ">

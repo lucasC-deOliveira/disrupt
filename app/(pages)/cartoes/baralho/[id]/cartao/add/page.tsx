@@ -143,7 +143,8 @@ export default function AdicionarCartao({
         Icon: AiFillCreditCard,
       },
     ]);
-  }, [changeTitle, changePaths]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="w-full pl-16 pr-16  ">
