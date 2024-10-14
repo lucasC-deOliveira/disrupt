@@ -11,6 +11,7 @@ import { useMyHeader } from "@/app/hooks/navigation";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 interface Card {
   title: string;
@@ -26,6 +27,23 @@ interface Deck {
   cards: Card;
 }
 
+const GET_DECK_BY_ID = gql`
+  query GetDeckById($id: String!) {
+    getDeckById(id: $id) {
+      title
+      photo
+    }
+  }
+`;
+
+const EDIT_DECK = gql`
+  mutation EditDeck($data: EditDeckInput!) {
+    editDeck(data: $data) {
+      id
+    }
+  }
+`;
+
 export default function EditarBaralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
 
@@ -37,13 +55,32 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
 
   const { replace } = useRouter();
 
-  let cards: Card[] = [];
-
   const { id } = params;
 
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
-  const deck: Deck = {} as Deck;
+  const [deck, setDeck] = useState<Deck>({} as Deck);
+
+  const [editDeck] = useMutation(EDIT_DECK);
+
+  const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
+    variables: { id: params.id },
+  });
+
+  useEffect(() => {
+    if (data) {
+      if (data?.getDeckById) {
+        const newDeck = data.getDeckById;
+        // console.log(newDeck.cards)
+        setPhoto(deck.photo);
+        setTitle(deck.title);
+        setDeck(newDeck);
+      }
+      if (error?.message === "Failed to fetch") {
+        refetch();
+      }
+    }
+  }, [data, deck.photo, deck.title, error?.message, refetch]);
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -73,26 +110,12 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
         Icon: FaEdit,
         link: `/cartoes/baralho/${params.id}/edit`,
       },
-
     ]);
 
     changeBackButton(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    let decks =
-      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
-
-    const deck = decks.find((deck: Deck) => deck.id === id);
-
-    if (deck) {
-      cards = deck.cards;
-      setPhoto(deck.photo);
-      setTitle(deck.title);
-    }
-  }, []);
+  }, [deck]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -112,25 +135,26 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    let decks: { photo: string; title: string; cards: any; id: string }[] =
-      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
+    editDeck({
+      variables: {
+        data: {
+          id: params.id,
+          title: title,
+          photo: photo,
+        },
+      },
+    })
+      .then(() => {
+        setSucessModalIsOpen(true);
 
-    const deck = decks.find((x) => x.id === id);
-
-    if (deck) {
-      deck.photo = photo;
-      deck.title = title;
-      deck.cards = cards;
-    }
-
-    localStorage.setItem("@Disrupt/Baralhos", JSON.stringify(decks));
-
-    setSucessModalIsOpen(true);
-
-    setTimeout(() => {
-      handleCloseSuccessModal();
-      replace(`/cartoes/baralho/${id}`);
-    }, 2000);
+        setTimeout(() => {
+          handleCloseSuccessModal();
+          replace(`/cartoes/baralho/${id}`);
+        }, 2000);
+      })
+      .catch((e) => {
+        console.log("erro", e.message);
+      });
   };
 
   return (

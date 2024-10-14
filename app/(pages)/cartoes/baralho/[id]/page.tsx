@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeleteModal } from "@/app/componens/DeleteModal";
 import { SucessModal } from "@/app/componens/SuccessModal";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import dayjs from "dayjs";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { useMyHeader } from "@/app/hooks/navigation";
@@ -49,12 +49,24 @@ const GET_DECK_BY_ID = gql`
   }
 `;
 
+const REMOVE_DECK = gql`
+  mutation RemoveDeck($id: String!) {
+    removeDeck(id: $id) {
+      id
+    }
+  }
+`;
+
 export default function Baralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
 
   const [deck, setDeck] = useState<Deck>({} as Deck);
 
   const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
+    variables: { id: params.id },
+  });
+
+  const [removeDeck, removeDeckMutationController] = useMutation(REMOVE_DECK, {
     variables: { id: params.id },
   });
 
@@ -93,22 +105,22 @@ export default function Baralho({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
-        link:'/cartoes'
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
-        link:'/cartoes'
+        link: "/cartoes",
       },
       {
         name: "Baralhos",
         Icon: MdLibraryBooks,
-        link:'/cartoes'
+        link: "/cartoes",
       },
       {
         name: deck?.title ? deck.title : "baralho",
         Icon: BsValentine2,
-        link:`/cartoes/baralho/${params.id}`
+        link: `/cartoes/baralho/${params.id}`,
       },
     ]);
     changeBackButton(true);
@@ -117,21 +129,16 @@ export default function Baralho({ params }: { params: { id: string } }) {
   }, [deck]);
 
   const handleDelete = () => {
-    const decksData =
-      JSON.parse(localStorage.getItem("@Disrupt/Baralhos") || "[]") || [];
+    removeDeck().then(() => {
+      handleCloseDeleteModal();
 
-    const newDecksData = decksData.filter((x: Deck) => x.id !== params.id);
-
-    localStorage.setItem("@Disrupt/Baralhos", JSON.stringify(newDecksData));
-
-    handleCloseDeleteModal();
-
-    setSuccessModalIsOpen(true);
-
-    setTimeout(() => {
-      handleCloseSuccessModal();
-      replace("/cartoes");
-    }, 2000);
+      setSuccessModalIsOpen(true);
+  
+      setTimeout(() => {
+        handleCloseSuccessModal();
+        replace("/cartoes");
+      }, 2000);
+    })  
   };
 
   return (
