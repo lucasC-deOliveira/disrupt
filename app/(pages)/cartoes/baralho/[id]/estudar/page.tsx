@@ -2,7 +2,7 @@
 
 import { useTheme } from "@/app/hooks/useTheme";
 import Image from "next/image";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { PacmanLoader } from "react-spinners";
 import { BiSolidHomeHeart } from "react-icons/bi";
@@ -11,6 +11,8 @@ import { useMyHeader } from "@/app/hooks/navigation";
 import { BsValentine2 } from "react-icons/bs";
 import { MdLibraryBooks } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
+// @ts-ignore
+import { SayButton } from "react-say";
 
 interface Card {
   answer: string;
@@ -51,7 +53,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const [face, setFace] = useState<"frente" | "verso">("frente");
   const [card, setCard] = useState<Card>({} as Card);
   const [answerCard] = useMutation(EDIT_CARD_EVALUATION);
-  const { changePaths, changeTitle,changeBackButton } = useMyHeader();
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_DECK_ID, {
     variables: { id: params.id, itemsPerPage: "1", page: "1" },
@@ -67,28 +69,27 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
-        link:"/cartoes"
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
-        link:"/cartoes"
+        link: "/cartoes",
       },
       {
         name: "Baralhos",
         Icon: MdLibraryBooks,
-        link:"/cartoes"
+        link: "/cartoes",
       },
       {
         name: "Baralho",
         Icon: BsValentine2,
-        link:`/cartoes/baralho/${params.id}/`
+        link: `/cartoes/baralho/${params.id}/`,
       },
       {
         name: "Estudar",
         Icon: PiStudentBold,
-        link:`/cartoes/baralho/${params.id}/estudar`
-
+        link: `/cartoes/baralho/${params.id}/estudar`,
       },
     ]);
     changeBackButton(true);
@@ -234,7 +235,13 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="text-center  text-2xl font-bold my-64  whitespace-normal break-all"
                     style={{ color: theme.color }}
                   >
-                    {card?.title}
+                    <SayButton
+                      onClick={(event: any) => console.log(event)}
+                      speak={card?.title}
+                      rate={1.5}
+                    >
+                      {card?.title}
+                    </SayButton>
                   </p>
                 </div>
               )}
@@ -259,7 +266,13 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                 className=" break-words whitespace-normal break-all"
                 style={{ color: theme.color }}
               >
-                {card?.title}
+                <SayButton
+                  onClick={(event: any) => console.log(event)}
+                  speak={card?.title}
+                  rate={1.5}
+                >
+                  {card?.title}
+                </SayButton>
               </h4>
               <hr
                 className="border w-full"
@@ -269,7 +282,13 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                 className="text-justify break-words whitespace-normal  text-2xl font-semibold my-52"
                 style={{ color: theme.color }}
               >
-                {card?.answer}
+                <SayButton
+                  onClick={(event: any) => console.log(event)}
+                  speak={card?.answer}
+                  rate={1.5}
+                >
+                  {card?.answer}
+                </SayButton>
               </p>
               <div
                 className="flex items-center justify-center absolute bottom-4 gap-4 w-full
@@ -348,9 +367,9 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       )}
       {!loading && !card?.title && (
         <div className="col-span-12 flex items-center justify-center">
-          <p className="my-96" style={{color:theme.color}}>
-          Não há mais cards para estudar!
-            </p>
+          <p className="my-96" style={{ color: theme.color }}>
+            Não há mais cards para estudar!
+          </p>
         </div>
       )}
     </section>
