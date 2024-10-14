@@ -266,13 +266,13 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                 style={{ borderColor: theme.color }}
               />
               <p
-                className="text-center break-words whitespace-normal break-all text-2xl font-semibold my-52"
+                className="text-justify break-words whitespace-normal  text-2xl font-semibold my-52"
                 style={{ color: theme.color }}
               >
                 {card?.answer}
               </p>
               <div
-                className="flex items-center justify-between absolute bottom-4 gap-2 w-96
+                className="flex items-center justify-center absolute bottom-4 gap-4 w-full
           px-4
           "
               >
@@ -284,7 +284,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     {formatTime(evalStrategy["Very Hard"])}
                   </span>
                   <button
-                    className="  p-2 border-2 rounded-md text-lg"
+                    className="  p-2 border-2 rounded-md  text-lg"
                     style={{ borderColor: theme.color, color: theme.color }}
                     onClick={() => evaluateAnswer("Very Hard")}
                     type="button"

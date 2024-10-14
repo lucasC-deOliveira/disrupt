@@ -158,26 +158,26 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
   };
 
   return (
-    <section className="w-full pl-16 pr-16  ">
-      <h3 className="text-2xl text-center" style={{ color: theme.color }}>
+    <section className="col-span-12 grid grid-cols-12 pl-16 pr-16  ">
+      <h3 className="text-2xl text-center col-start-6" style={{ color: theme.color }}>
         Editar Baralho
       </h3>
       <div
-        className="w-full   flex flex-col items-center justify-center py-16  px-96 gap-8  "
+        className="col-span-12 grid grid-cols-12 pt-4  "
         style={{ borderColor: theme.color, color: theme.color }}
       >
-        <form className="w-full" method="Post" onSubmit={handleSubmit}>
+        <form className="col-span-12 lg:col-span-5 lg:col-start-4 xl:col-span-3 xl:col-start-5" method="Post" onSubmit={handleSubmit}>
           <div
             className="w-full border-2 rounded-2xl px-8 pt-24  "
             style={{
               borderColor: theme.color,
               color: theme.color,
-              height: 728 + "px",
+              height: 578 + "px",
             }}
           >
             <div
-              className="w-full border-2 rounded-md flex h-80 justify-center items-center relative"
-              style={{ borderColor: theme.color }}
+              className="w-full border-2 rounded-md flex  justify-center items-center relative"
+              style={{ borderColor: theme.color, height: 200 + "px", }}
             >
               {!photo && <h3 className="text-2xl">Foto</h3>}
               {photo && (

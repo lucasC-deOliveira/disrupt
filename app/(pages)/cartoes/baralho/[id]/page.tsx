@@ -142,7 +142,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
   };
 
   return (
-    <section className="w-full pl-16 pr-16 ">
+    <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 ">
       <DeleteModal
         actionFunction={handleDelete}
         closeModal={handleCloseDeleteModal}
@@ -155,8 +155,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
         message="Baralho removido com sucesso!"
       />
       <div
-        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto"
-        style={{ width: 500 }}
+        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 "
       >
         <div className="w-full flex justify-end gap-2">
           <Link
@@ -178,14 +177,14 @@ export default function Baralho({ params }: { params: { id: string } }) {
         </div>
         <div
           className=" border-2 rounded-md  pr-1  w-full"
-          style={{ borderColor: theme.color }}
+          style={{ borderColor: theme.color, height:578+"px" }}
         >
           <div
-            className=" border-2 rounded-md   pr-1"
+            className=" border-2 rounded-md h-full  pr-1"
             style={{ borderColor: theme.color }}
           >
             <div
-              className=" border-2 rounded-md   p-8"
+              className=" border-2 rounded-md h-full  p-8"
               style={{ borderColor: theme.color }}
             >
               {" "}
@@ -198,19 +197,19 @@ export default function Baralho({ params }: { params: { id: string } }) {
                 </h6>
               </div>
               <div
-                className="flex w-full items-center justify-center h-96  rounded-md border-2  mb-8"
-                style={{ borderColor: theme.color }}
+                className="flex w-full items-center justify-center  rounded-md border-2  mb-8"
+                style={{ borderColor: theme.color, height:250+"px" }}
               >
                 <Image
                   src={deck.photo}
                   alt="foto do baralho"
-                  width={44}
-                  height={90}
+                  width={400}
+                  height={200}
                   className="w-full h-full rounded-md"
                 />
               </div>
               <h2
-                className="text-center text-4xl font-bold mt-4 mb-8"
+                className="text-center text-4xl font-bold mt-12 mb-14"
                 style={{ color: theme.color }}
               >
                 {deck.title}

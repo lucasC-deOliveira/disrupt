@@ -202,7 +202,7 @@ export const Header = () => {
             )}
           </div>
           <div
-            className="rounded-full border-2  w-8 h-8 p-1"
+            className="rounded-full border-2  w-12 h-12 p-1"
             style={{ borderColor: theme.color }}
           >
             <Image
