@@ -48,7 +48,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const [face, setFace] = useState<"frente" | "verso">("frente");
   const [card, setCard] = useState<Card>({} as Card);
   const [answerCard] = useMutation(EDIT_CARD_EVALUATION);
-  const {changePaths,changeTitle} = useMyHeader()
+  const { changePaths, changeTitle } = useMyHeader();
 
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_DECK_ID, {
     variables: { id: params.id, itemsPerPage: "1", page: "1" },
@@ -70,7 +70,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         Icon: AiFillCreditCard,
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const override: CSSProperties = {
@@ -82,11 +82,15 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const evalStrategy = {
     "Very Hard": 60,
     Hard: 5 * 60,
-    Nomal:
+    Normal:
+      card?.times > 1 &&
+      card?.evaluation === "Normal" &&
       60 * 30 * (card?.times + 1) < 259200
         ? 60 * 30 * (card?.times + 1)
         : 259200,
     Easy:
+      card?.times > 1 &&
+      card?.evaluation === "Easy" &&
       60 * 60 * 24 * 3 * (card?.times + 1) < 7776000
         ? 60 * 60 * 24 * 3 * (card?.times + 1)
         : 7776000,
@@ -118,7 +122,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   }
 
   const evaluateAnswer = (
-    evaluation: "Very Hard" | "Hard" | "Nomal" | "Easy"
+    evaluation: "Very Hard" | "Hard" | "Normal" | "Easy"
   ) => {
     return answerCard({ variables: { id: card.id, evaluation } }).then(() => {
       refetch();
@@ -287,12 +291,12 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="block text-lg"
                     style={{ color: theme.color }}
                   >
-                    {formatTime(evalStrategy["Nomal"])}
+                    {formatTime(evalStrategy["Normal"])}
                   </span>
                   <button
                     className="  p-2 border-2 rounded-md text-lg"
                     style={{ borderColor: theme.color, color: theme.color }}
-                    onClick={() => evaluateAnswer("Nomal")}
+                    onClick={() => evaluateAnswer("Normal")}
                     type="button"
                   >
                     Bom
@@ -320,8 +324,10 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         </div>
       )}
       {!loading && !card?.title && (
-        <div className="w-full flex items-center justify-center">
+        <div className="col-span-12 flex items-center justify-center">
+          <p className="my-96" style={{color:theme.color}}>
           Não há mais cards para estudar!
+            </p>
         </div>
       )}
     </section>

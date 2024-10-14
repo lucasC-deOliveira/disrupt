@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { BiSolidHomeHeart } from "react-icons/bi";
+import dayjs from "dayjs";
 
 interface Card {
   evaluation: string;
@@ -69,7 +70,7 @@ export default function Cartoes() {
         Icon: AiFillCreditCard,
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -191,8 +192,7 @@ export default function Cartoes() {
                         {deck?.cards?.filter(
                           (card) =>
                             (card.times > 0 &&
-                              new Date(card.showDataTime).getTime() <=
-                                new Date().getTime() &&
+                              dayjs(card.showDataTime).isBefore(dayjs()) &&
                               card.evaluation == "Very Hard") ||
                             card.evaluation == "Hard"
                         ).length || 0}
@@ -212,8 +212,7 @@ export default function Cartoes() {
                         {
                           deck?.cards?.filter(
                             (card) =>
-                              new Date(card.showDataTime).getTime() <=
-                                new Date().getTime() &&
+                              dayjs(card.showDataTime).isBefore(dayjs()) &&
                               card.times > 0 &&
                               (card.evaluation === "Normal" ||
                                 card.evaluation === "Easy")

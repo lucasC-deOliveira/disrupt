@@ -76,6 +76,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
     if (data) {
       if (data?.getDeckById) {
         const newDeck = data.getDeckById;
+        // console.log(newDeck.cards)
         setDeck(newDeck);
       }
       if (error?.message === "Failed to fetch") {
@@ -221,8 +222,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
                     {deck?.cards?.filter(
                       (card) =>
                         (card.times > 0 &&
-                          new Date(card.showDataTime).getTime() <=
-                            new Date().getTime() &&
+                          dayjs(card.showDataTime).isBefore(dayjs()) &&
                           card.evaluation == "Very Hard") ||
                         card.evaluation == "Hard"
                     ).length || 0}
@@ -242,8 +242,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
                     {
                       deck?.cards?.filter(
                         (card) =>
-                          new Date(card.showDataTime).getTime() <=
-                            new Date().getTime() &&
+                          dayjs(card.showDataTime).isBefore(dayjs()) &&
                           card.times > 0 &&
                           (card.evaluation === "Normal" ||
                             card.evaluation === "Easy")
