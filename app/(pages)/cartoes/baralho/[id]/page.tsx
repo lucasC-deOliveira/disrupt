@@ -14,6 +14,8 @@ import { gql, useQuery } from "@apollo/client";
 import dayjs from "dayjs";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { useMyHeader } from "@/app/hooks/navigation";
+import { MdLibraryBooks } from "react-icons/md";
+import { BsValentine2 } from "react-icons/bs";
 
 interface Card {
   answer: string;
@@ -56,7 +58,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
     variables: { id: params.id },
   });
 
-  const {changePaths,changeTitle} = useMyHeader()
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
   const { replace } = useRouter();
 
@@ -91,14 +93,28 @@ export default function Baralho({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link:'/cartoes'
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link:'/cartoes'
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link:'/cartoes'
+      },
+      {
+        name: deck?.title ? deck.title : "baralho",
+        Icon: BsValentine2,
+        link:`/cartoes/baralho/${params.id}`
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deck]);
 
   const handleDelete = () => {
     const decksData =
@@ -150,7 +166,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
             href={`/cartoes/baralho/${params.id}/cartoes`}
           >
             {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
-           Abrir Deck
+            Abrir Deck
           </Link>
         </div>
         <div

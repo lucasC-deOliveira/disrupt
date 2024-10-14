@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
 import { useMyHeader } from "@/app/hooks/navigation";
+import { MdLibraryBooks } from "react-icons/md";
+import { BsValentine2 } from "react-icons/bs";
+import { FaEdit } from "react-icons/fa";
 
 interface Card {
   title: string;
@@ -38,7 +41,9 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
 
   const { id } = params;
 
-  const { changePaths, changeTitle } = useMyHeader();
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
+
+  const deck: Deck = {} as Deck;
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -46,13 +51,34 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
       },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      {
+        name: deck?.title ? deck.title : "baralho",
+        Icon: BsValentine2,
+        link: `/cartoes/baralho/${params.id}`,
+      },
+      {
+        name: "Editar baralho",
+        Icon: FaEdit,
+        link: `/cartoes/baralho/${params.id}/edit`,
+      },
+
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { IconType } from 'react-icons';
+import { IconType } from "react-icons";
 // Define a interface para o tipo do contexto
 
 interface path {
   Icon: IconType;
   name: string;
+  link:string
 }
 
 interface HeaderContextType {
@@ -12,6 +13,8 @@ interface HeaderContextType {
   title: string;
   changeTitle: (newTitle: string) => void;
   changePaths: (newPaths: path[]) => void;
+  backButton: boolean;
+  changeBackButton: (newBackButton: boolean) => void;
 }
 
 // Cria o contexto, inicializando como undefined para forçar a verificação de uso do contexto apenas dentro do provedor
@@ -23,6 +26,8 @@ export function MyHeaderProvider({ children }: { children: ReactNode }) {
 
   const [title, setTitle] = useState<string>("");
 
+  const [backButton, setBackButton] = useState<boolean>(false);
+
   const changePaths = (newPaths: HeaderContextType["paths"]) => {
     setPaths(newPaths);
   };
@@ -31,17 +36,30 @@ export function MyHeaderProvider({ children }: { children: ReactNode }) {
     setTitle(newTitle);
   };
 
+  const changeBackButton = (newBackButton: boolean) => {
+    setBackButton(newBackButton);
+  };
+
   return (
-    <HeaderContext.Provider value={{ title, paths, changePaths, changeTitle }}>
+    <HeaderContext.Provider
+      value={{
+        title,
+        paths,
+        changePaths,
+        changeTitle,
+        backButton,
+        changeBackButton,
+      }}
+    >
       {children}
     </HeaderContext.Provider>
   );
 }
 
 export function useMyHeader(): HeaderContextType {
-    const context = useContext(HeaderContext);
-    if (!context) {
-      throw new Error('useMyHeader deve ser usado dentro de um MyProvider');
-    }
-    return context;
+  const context = useContext(HeaderContext);
+  if (!context) {
+    throw new Error("useMyHeader deve ser usado dentro de um MyProvider");
   }
+  return context;
+}

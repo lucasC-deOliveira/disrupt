@@ -9,6 +9,8 @@ import { gql, useMutation } from "@apollo/client";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
+import { MdLibraryBooks } from "react-icons/md";
+import { IoMdAddCircle } from "react-icons/io";
 
 const CREATE_DECK = gql`
   mutation CreateDeck($data: CreateDeckInput!) {
@@ -63,7 +65,7 @@ export default function CadastrarBaralho() {
     photo && reader.readAsDataURL(photo);
   };
 
-  const { changeTitle, changePaths } = useMyHeader();
+  const { changeTitle, changePaths, changeBackButton } = useMyHeader();
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -71,13 +73,24 @@ export default function CadastrarBaralho() {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
       },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      { name: "Adicionar baralho", Icon: IoMdAddCircle, link:"/cartoes/baralho/cadastrar" },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

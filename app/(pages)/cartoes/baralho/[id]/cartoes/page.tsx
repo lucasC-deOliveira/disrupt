@@ -8,9 +8,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { BiSolidHomeHeart } from "react-icons/bi";
+import { BsValentine2 } from "react-icons/bs";
 import { DiTravis } from "react-icons/di";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaBoxOpen, FaRegTrashAlt } from "react-icons/fa";
 import { LuPencilLine } from "react-icons/lu";
+import { MdLibraryBooks } from "react-icons/md";
 
 interface Card {
   photo: string;
@@ -57,6 +59,8 @@ export default function Cartoes({ params }: { params: { id: string } }) {
 
   const [deckTitle, setDeckTitle] = useState("");
 
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
+
   useEffect(() => {
     if (data) {
       if (data?.getDeckById) {
@@ -69,8 +73,6 @@ export default function Cartoes({ params }: { params: { id: string } }) {
       }
     }
   }, [data, error, refetch]);
-  
-  const { changePaths, changeTitle } = useMyHeader();
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -78,14 +80,33 @@ export default function Cartoes({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      {
+        name: deckTitle ? deckTitle : "baralho",
+        Icon: BsValentine2,
+        link:`/cartoes/baralho/${params.id}`
+      },
+      {
+        name: "Abrir baralho",
+        Icon: FaBoxOpen,
+        link:`/cartoes/baralho/${params.id}/cartoes`
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deckTitle]);
 
   return (
     <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">
@@ -94,7 +115,7 @@ export default function Cartoes({ params }: { params: { id: string } }) {
           className="text-2xl my-4 text-center"
           style={{ color: theme.color }}
         >
-          Cartões {deckTitle}
+          Cartões do baralho {deckTitle}
         </h4>
       </div>
       <div className="w-full  rounded-md grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">

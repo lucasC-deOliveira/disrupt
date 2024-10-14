@@ -8,6 +8,9 @@ import { PacmanLoader } from "react-spinners";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
 import { useMyHeader } from "@/app/hooks/navigation";
+import { BsValentine2 } from "react-icons/bs";
+import { MdLibraryBooks } from "react-icons/md";
+import { PiStudentBold } from "react-icons/pi";
 
 interface Card {
   answer: string;
@@ -48,7 +51,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const [face, setFace] = useState<"frente" | "verso">("frente");
   const [card, setCard] = useState<Card>({} as Card);
   const [answerCard] = useMutation(EDIT_CARD_EVALUATION);
-  const { changePaths, changeTitle } = useMyHeader();
+  const { changePaths, changeTitle,changeBackButton } = useMyHeader();
 
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_DECK_ID, {
     variables: { id: params.id, itemsPerPage: "1", page: "1" },
@@ -64,12 +67,32 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link:"/cartoes"
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link:"/cartoes"
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link:"/cartoes"
+      },
+      {
+        name: "Baralho",
+        Icon: BsValentine2,
+        link:`/cartoes/baralho/${params.id}/`
+      },
+      {
+        name: "Estudar",
+        Icon: PiStudentBold,
+        link:`/cartoes/baralho/${params.id}/estudar`
+
       },
     ]);
+    changeBackButton(true);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

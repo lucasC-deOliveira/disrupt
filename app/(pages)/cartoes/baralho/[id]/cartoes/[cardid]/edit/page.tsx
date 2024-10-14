@@ -9,6 +9,9 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
 import { useMyHeader } from "@/app/hooks/navigation";
+import { MdLibraryBooks } from "react-icons/md";
+import { BsValentine2 } from "react-icons/bs";
+import { FaBoxOpen, FaEdit } from "react-icons/fa";
 
 interface Card {
   answer: string;
@@ -88,7 +91,7 @@ export default function EditarCartao({
 
   const [card, setCard] = useState({} as Card);
 
-  const { changePaths, changeTitle } = useMyHeader();
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_ID, {
     variables: { id: params.cardid },
@@ -163,13 +166,39 @@ export default function EditarCartao({
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
       },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      {
+        name: "baralho",
+        Icon: BsValentine2,
+        link: `/cartoes/baralho/${params.id}`,
+      },
+      
+      {
+        name: "Abrir baralho",
+        Icon: FaBoxOpen,
+        link: `/cartoes/baralho/${params.id}/cartoes`,
+      },
+      {
+        name: "Editar cartão",
+        Icon: FaEdit,
+        link: `/cartoes/baralho/${params.id}/cartoes/${params.cardid}/edit`,
+      },
+      
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

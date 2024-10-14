@@ -12,6 +12,9 @@ import { TbJson } from "react-icons/tb";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
+import { MdLibraryBooks } from "react-icons/md";
+import { BsValentine2 } from "react-icons/bs";
+import { IoMdAddCircle } from "react-icons/io";
 
 interface Card {
   answer: string;
@@ -129,7 +132,7 @@ export default function AdicionarCartao({
     }
   };
 
-  const { changePaths, changeTitle } = useMyHeader();
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -137,13 +140,31 @@ export default function AdicionarCartao({
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
       },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link:'/cartoes'
+      },
+      {
+        name: "baralho",
+        Icon: BsValentine2,
+        link:`/cartoes/baralho/${params.id}`
+      },
+      { name: "Adicionar cartão", 
+        Icon: IoMdAddCircle, 
+        link:`/cartoes/baralho/${params.id}/cartao/add` },
+
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    changeBackButton(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -158,9 +179,9 @@ export default function AdicionarCartao({
         <Link
           className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end"
           style={{ borderColor: theme.color, color: theme.color }}
-          href="/cartoes/baralho/cadastrar"
+          href={`/cartoes/baralho/${params.id}/cartao/add/json`}
         >
-          <LuFileJson className="w-6 h-6"/>
+          <LuFileJson className="w-6 h-6" />
           Criar com
           <TbJson className="w-6 h-6" />
         </Link>

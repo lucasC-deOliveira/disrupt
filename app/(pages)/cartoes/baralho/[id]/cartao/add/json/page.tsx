@@ -6,11 +6,14 @@ import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
 import dynamic from "next/dynamic";
 
-
 import JsonFormatter from "react-json-formatter";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
+import { MdLibraryBooks } from "react-icons/md";
+import { BsValentine2 } from "react-icons/bs";
+import { IoMdAddCircle } from "react-icons/io";
+import { TbJson } from "react-icons/tb";
 
 const AceEditor = dynamic(
   async () => {
@@ -60,8 +63,6 @@ export default function AdicionarCartaoJson({
 
   const [createCard, { data, loading, error }] = useMutation(CREATE_CARD);
 
-  const { replace } = useRouter();
-
   const [markdownText, setMarkdownText] = useState(
     `{
   "cards":[{
@@ -71,14 +72,14 @@ export default function AdicionarCartaoJson({
 }
     `
   );
-  
+
   const handleCloseSuccessModal = () => {
     setSucessModalIsOpen(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     const obj = JSON.parse(markdownText);
 
     if (Array.isArray(obj?.cards)) {
@@ -94,7 +95,7 @@ export default function AdicionarCartaoJson({
                 showDataTime: new Date().toISOString(),
                 deckId: params.id,
                 type: "text",
-                photo:""
+                photo: "",
               },
             },
           });
@@ -116,14 +117,13 @@ export default function AdicionarCartaoJson({
     }
   };
 
-
   const jsonStyle = {
     propertyStyle: { color: theme.color },
     stringStyle: { color: "white" },
     numberStyle: { color: theme.color },
   };
 
-  const { changePaths, changeTitle } = useMyHeader();
+  const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -131,13 +131,36 @@ export default function AdicionarCartaoJson({
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      {
+        name: "baralho",
+        Icon: BsValentine2,
+        link: `/cartoes/baralho/${params.id}`,
+      },
+      {
+        name: "Adicionar cartão",
+        Icon: IoMdAddCircle,
+        link: `/cartoes/baralho/${params.id}/cartao/add`,
+      },
+      {
+        name: "Adicionar cartão por json",
+        Icon: TbJson,
+        link: `/cartoes/baralho/${params.id}/cartao/add/json`,
       },
     ]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    changeBackButton(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import dayjs from "dayjs";
+import { MdLibraryBooks } from "react-icons/md";
 
 interface Card {
   evaluation: string;
@@ -44,7 +45,7 @@ export default function Cartoes() {
 
   const [decks, setDecks] = useState<Deck[]>([]);
 
-  const { changeTitle, changePaths } = useMyHeader();
+  const { changeTitle, changePaths, changeBackButton } = useMyHeader();
 
   useEffect(() => {
     if (data) {
@@ -64,12 +65,20 @@ export default function Cartoes() {
       {
         name: "Home",
         Icon: BiSolidHomeHeart,
+        link: "/cartoes",
       },
       {
         name: "Cartões",
         Icon: AiFillCreditCard,
+        link: "/cartoes",
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
       },
     ]);
+    changeBackButton(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

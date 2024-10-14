@@ -1,15 +1,17 @@
 "use client";
+import Image from "next/image";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { useTheme } from "@/app/hooks/useTheme";
 import { Ribeye_Marrow, Orbitron } from "next/font/google";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BiSearchAlt, BiSolidHomeHeart } from "react-icons/bi";
-import { BsSignpostSplit } from "react-icons/bs";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { GiTomato } from "react-icons/gi";
-import { GrGroup, GrPowerReset } from "react-icons/gr";
+import { GrPowerReset } from "react-icons/gr";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoPlaySkipForward } from "react-icons/io5";
+import gumball from "../../../public/images/gumball.jpg";
 
 const ribeye_Marrow = Ribeye_Marrow({
   subsets: ["latin"],
@@ -33,7 +35,9 @@ export const Header = () => {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { title, paths } = useMyHeader();
+  const { title, paths, backButton } = useMyHeader();
+
+  const { back } = useRouter();
 
   const handleResetByTimeCycle = useCallback(() => {
     setTime(timeCycle === "work" ? 25 * 60 : 5 * 60);
@@ -106,20 +110,31 @@ export const Header = () => {
   return (
     <header className="col-span-12 mb-4 ">
       <div className="flex justify-end md:justify-between items-center">
-        <Link
-          href={""}
-          style={{ color: theme.color }}
-          className="md:flex gap-2 items-center hidden"
-        >
-          {paths.map(({ Icon, name }, i,k) => (
-            <>
-              <Icon style={{ fill: theme.color }} key={i + "a"} />{" "}
-              <span key={i + "b"}>
-                {name} { (i < k.length-1) && "/"}{" "}
-              </span>
-            </>
-          ))}
-        </Link>
+        <div className="flex items-center gap-4">
+          {backButton && (
+            <button
+              type="button"
+              className="flex items-center justify-center w-8 h-8 min-h-8 min-w-8 rounded-full  border-2 border-solid "
+              style={{ color: theme.color, borderColor: theme.color }}
+              onClick={back}
+            >
+              <IoMdArrowRoundBack />
+            </button>
+          )}
+          <div
+            style={{ color: theme.color }}
+            className="md:flex gap-2 items-center hidden"
+          >
+            {paths.map(({ Icon, name, link }, i, k) => (
+              <Link className="flex items-center gap-1 " href={link} key={i}>
+                <Icon style={{ fill: theme.color }} />{" "}
+                <span>
+                  {name} {i < k.length - 1 && "/"}{" "}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
         <div className=" flex gap-6 items-center">
           <div
             className="flex gap-2 items-center justify-center font-bold h-full"
@@ -186,13 +201,18 @@ export const Header = () => {
               </div>
             )}
           </div>
-          <button type="button">
-            <BiSearchAlt className=" w-8 h-8" style={{ fill: theme.color }} />
-          </button>
           <div
-            className="rounded-full border-2  w-8 h-8"
+            className="rounded-full border-2  w-8 h-8 p-1"
             style={{ borderColor: theme.color }}
-          ></div>
+          >
+            <Image
+              className="w-full h-full rounded-full"
+              src={gumball.src}
+              alt="foto de perfil"
+              width={25}
+              height={25}
+            />
+          </div>
         </div>
       </div>
       <h1
