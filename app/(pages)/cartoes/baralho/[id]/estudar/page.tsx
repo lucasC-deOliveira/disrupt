@@ -17,8 +17,7 @@ import lolCardRed from "../../../../../../public/images/lolCardFrameRed.png";
 import lolCardDarkBlue from "../../../../../../public/images/lolCardFrameDarkBlue.png";
 import lolCardGold from "../../../../../../public/images/lolCardFrameGold.png";
 import lolCardSilver from "../../../../../../public/images/lolCardFrameSilver.png";
-// @ts-ignore
-import Speech from "react-speech";
+
 
 const cardFrame: any = {
   blue: lolCardBlue.src,
@@ -277,18 +276,18 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="text-center  text-2xl font-bold my-64  whitespace-normal break-all"
                     style={{ color: theme.color }}
                   >
-                    {/* <SayButton
+                    <SayButton
                       onClick={(event: any) => console.log(event)}
                       speak={card?.title}
                       rate={1.5}
                     >
                       {card?.title}
-                    </SayButton> */}
-                      <Speech
+                    </SayButton>
+                      {/* <Speech
                         text="I have altered my voice"
                         voice="Google UK English Female"
                         textAsButton={true} 
-                      />
+                      /> */}
                   </p>
                 </div>
               )}
