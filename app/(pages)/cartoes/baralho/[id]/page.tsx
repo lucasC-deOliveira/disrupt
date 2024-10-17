@@ -142,7 +142,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
   };
 
   return (
-    <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 ">
+    <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 " style={{background:theme.background}}>
       <DeleteModal
         actionFunction={handleDelete}
         closeModal={handleCloseDeleteModal}

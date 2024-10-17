@@ -11,6 +11,25 @@ import { useMyHeader } from "@/app/hooks/navigation";
 import { BsValentine2 } from "react-icons/bs";
 import { MdLibraryBooks } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
+import lolCardPurple from "../../../../../../public/images/lolCardFramePurple.png";
+import lolCardBlue from "../../../../../../public/images/lolCardFrameBlue.png";
+import lolCardRed from "../../../../../../public/images/lolCardFrameRed.png";
+import lolCardDarkBlue from "../../../../../../public/images/lolCardFrameDarkBlue.png";
+import lolCardGold from "../../../../../../public/images/lolCardFrameGold.png";
+import lolCardSilver from "../../../../../../public/images/lolCardFrameSilver.png";
+// @ts-ignore
+import Speech from "react-speech";
+
+const cardFrame: any = {
+  blue: lolCardBlue.src,
+  purple: lolCardPurple.src,
+  gold: lolCardGold.src,
+  red: lolCardRed.src,
+  darkBlue: lolCardDarkBlue.src,
+  silver: lolCardSilver.src,
+  "": "",
+};
+
 // @ts-ignore
 import { SayButton } from "react-say";
 
@@ -181,7 +200,10 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   }, [data, error?.message, params.id, refetch]);
 
   return (
-    <section className="w-full grid grid-cols-12 pl-16 pr-16 ">
+    <section
+      className="w-full grid grid-cols-12 pl-16 pr-16 "
+      style={{ background: theme.background }}
+    >
       {loading && (
         <div
           className="col-span-12 mt-56 flex flex-col items-center justify-center"
@@ -199,11 +221,31 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         </div>
       )}
       {!loading && card?.title && (
-        <div className="col-span-12 mt-12 rounded-md flex flex-col items-center justify-center py-4 gap-8 ">
+        <div className="col-span-12 mt-12 rounded-md flex flex-col items-center justify-center py-4 gap-8 relative">
+          {!!cardFrame[theme.cardFrame] && (
+            <Image
+              src={cardFrame[theme.cardFrame]}
+              alt="a"
+              width={500}
+              height={500}
+              className=" -top-6 absolute z-2 "
+              objectFit="cover"
+              objectPosition="center"
+              style={{
+                width: 488,
+                height: 858,
+                minHeight: 788,
+                minWidth: 488,
+                maxWidth: 488,
+                backgroundSize: "cover",
+              }}
+            />
+          )}
+
           {face == "frente" && (
             <div
-              className=" border-2 rounded-md w-3/4 lg:w-3/6 xl:w-2/6 p-8"
-              style={{ borderColor: theme.color }}
+              className={`${!cardFrame[theme.cardFrame] ? "border-2" : ""}  rounded-md w-3/4 lg:w-3/6 xl:w-2/6 p-8 z-0`}
+              style={{ borderColor: theme.color, height: 815, width: 400 }}
             >
               {card?.photo && (
                 <>
@@ -223,7 +265,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     <p
                       className="text-center  text-4xl font-bold my-12 break-words whitespace-normal break-all"
                       style={{ color: theme.color }}
-                    >
+                    >     
                       {card?.title}
                     </p>
                   </div>
@@ -235,13 +277,18 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="text-center  text-2xl font-bold my-64  whitespace-normal break-all"
                     style={{ color: theme.color }}
                   >
-                    <SayButton
+                    {/* <SayButton
                       onClick={(event: any) => console.log(event)}
                       speak={card?.title}
                       rate={1.5}
                     >
                       {card?.title}
-                    </SayButton>
+                    </SayButton> */}
+                      <Speech
+                        text="I have altered my voice"
+                        voice="Google UK English Female"
+                        textAsButton={true} 
+                      />
                   </p>
                 </div>
               )}
@@ -259,11 +306,11 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
           )}
           {face == "verso" && (
             <div
-              className=" border-2 rounded-md w-3/4 lg:w-3/6 xl:w-2/6 flex flex-col justify-center items-center  p-8 relative"
-              style={{ borderColor: theme.color }}
+              className=" rounded-md w-3/4 lg:w-3/6 xl:w-2/6 flex flex-col items-center  p-4 relative"
+              style={{ borderColor: theme.color, height: 815, width: 400 }}
             >
               <h4
-                className=" break-words whitespace-normal break-all"
+                className=" break-words whitespace-normal break-all my-8"
                 style={{ color: theme.color }}
               >
                 <SayButton
@@ -291,7 +338,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                 </SayButton>
               </p>
               <div
-                className="flex items-center justify-center absolute bottom-4 gap-4 w-full
+                className="flex items-center justify-center absolute bottom-8 gap-4 w-full
           px-4
           "
               >

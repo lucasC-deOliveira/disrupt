@@ -3,7 +3,6 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "./componens/Sidebar";
 import { Header } from "./componens/Header";
-import { AiFillSetting } from "react-icons/ai";
 import { ConfigButton } from "./componens/ConfigButton";
 import Providers from "./hooks/providers";
 

@@ -11,6 +11,7 @@ import {
 interface Theme {
   color: string;
   background: string;
+  cardFrame:string
 }
 
 interface ThemeProviderContext {
@@ -31,6 +32,7 @@ export function ThemeProvider({ children }: ThemeProviderContext) {
     const newTheme = {
       color: theme.color.trim(),
       background: theme.background.trim(),
+      cardFrame:theme.cardFrame,
     };
 
     localStorage.setItem("theme", JSON.stringify(newTheme));
@@ -46,17 +48,19 @@ export function ThemeProvider({ children }: ThemeProviderContext) {
       } catch (e) {
         localStorage.setItem(
           "theme",
-          JSON.stringify({ color: "red-500", background: "black" })
+          JSON.stringify({ color: "red-500", background: "black", cardFrame:"" })
         );
         setTheme({
           color: "red-500",
           background: "black",
+          cardFrame:""
         });
       }
     } else {
       setTheme({
         color: "red-500",
         background: "black",
+        cardFrame:""
       });
     }
   }, []);
