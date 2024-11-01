@@ -46,7 +46,7 @@ const [height, setHeight] = useState(1000);
               {/* <li><Link href="/provas" className="flex gap-4 items-center"><IoDocumentOutline className="w-6 h-6" /> Provas</Link></li> */}
               {/* <li><Link href="" className="flex gap-4 items-center"> <FaBook className="w-6 h-6"/>Questões </Link></li> */}
               <li><Link href="/cartoes" className="flex gap-4 items-center"><FaRegPenToSquare className="w-6 h-6" />Cartões</Link></li>
-              {/* <li><Link href="" className="flex gap-4 items-center"><GrGroup className="w-6 h-6"/> Social</Link></li>        */}
+              <li><Link href="/wordsCount" className="flex gap-4 items-center"><GrGroup className="w-6 h-6"/> Words Count</Link></li>       
             </ul>
             </nav>
 

@@ -100,8 +100,8 @@ export const ConfigButton = () => {
           <button
             className="w-4 h-4"
             type="button"
-            style={{ backgroundColor: "rgb(22,68,177)" }}
-            onClick={() => setColor("rgb(22,68,177)")}
+            style={{ backgroundColor: "rgb(173,235,255)" }}
+            onClick={() => setColor("rgb(173,235,255)")}
           />
           <button
             className="w-4 h-4"

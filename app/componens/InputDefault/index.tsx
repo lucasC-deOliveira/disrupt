@@ -1,13 +1,14 @@
 "use client";
 
 import { useTheme } from "@/app/hooks/useTheme";
+import { InputHTMLAttributes } from "react";
 
-interface InputDefaultProps {
+interface InputDefaultProps extends InputHTMLAttributes<HTMLInputElement>{
   name: string;
   height?: string;
 }
 
-export const InputDefault = ({ name, height = "16" }: InputDefaultProps) => {
+export const InputDefault = ({ name, height = "16", ...rest }: InputDefaultProps) => {
   const { theme } = useTheme();
   return (
     <label
@@ -18,8 +19,9 @@ export const InputDefault = ({ name, height = "16" }: InputDefaultProps) => {
       <input
         type="text"
         id={name.replace(" ", "")}
-        className="peer border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0"
+        className="peer border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 h-full w-full"
         placeholder={name}
+        {...rest}
       />
 
       <span
