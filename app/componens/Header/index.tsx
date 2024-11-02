@@ -6,12 +6,10 @@ import { Ribeye_Marrow, Orbitron } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { GiTomato } from "react-icons/gi";
-import { GrPowerReset } from "react-icons/gr";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { IoPlaySkipForward } from "react-icons/io5";
 import gumball from "../../../public/images/gumball.jpg";
+import { PomodoroTimer } from "../Timer";
 
 const ribeye_Marrow = Ribeye_Marrow({
   subsets: ["latin"],
@@ -78,6 +76,17 @@ export const Header = () => {
     handleResetByTimeCycle(); // Ajusta o tempo quando o ciclo muda.
   }, [timeCycle, handleResetByTimeCycle]);
 
+  const handlerPause = () => {
+    setPause((oldState) => !oldState);
+  };
+
+  const changeTime = (seconds: number) => {
+    setTime(seconds);
+  };
+
+  const changeTimeCycle = () => {
+    setTimeCycle((prevCycle) => (prevCycle === "work" ? "rest" : "work"));
+  };
   // const handleResetByTimeCycle = useCallback(() => {
   //   if (timeCicle == "work") {
   //     setTime(25 * 60);
@@ -108,32 +117,48 @@ export const Header = () => {
   // }, [handleResetByTimeCycle, timeCicle]);
 
   return (
-    <header className="col-span-12 mb-4 ">
-      <div className="flex justify-end md:justify-between items-center">
-        <div className="flex items-center gap-4">
-          {backButton && (
-            <button
-              type="button"
-              className="flex items-center justify-center w-8 h-8 min-h-8 min-w-8 rounded-full  border-2 border-solid "
-              style={{ color: theme.color, borderColor: theme.color }}
-              onClick={back}
+    <header
+      className="col-span-12 mb-4 p-4 rounded-md border-2 bg-black bg-opacity-90  transition-all duration-300  tracking-wide"
+      style={{
+        borderColor: theme.color,
+        boxShadow: `0 0 15px ${theme.color}, 0 0 30px ${theme.color},0 0 45px rgba(0, 255, 255, 0.2), 0 0 60px ${theme.color}`,
+        transition: "box-shadow 0.3s ease ",
+        animation: "pulseNeon 2s infinite ease-in-out",
+      }}
+    >
+      <div className="w-full flex justify-between items-center">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 ">
+            {backButton && (
+              <button
+                type="button"
+                className="flex items-center justify-center w-8 h-8 min-h-8 min-w-8 rounded-full  border-2 border-solid "
+                style={{ color: theme.color, borderColor: theme.color }}
+                onClick={back}
+              >
+                <IoMdArrowRoundBack />
+              </button>
+            )}
+            <div
+              style={{ color: theme.color }}
+              className="md:flex gap-2 items-center hidden"
             >
-              <IoMdArrowRoundBack />
-            </button>
-          )}
-          <div
-            style={{ color: theme.color }}
-            className="md:flex gap-2 items-center hidden"
-          >
-            {paths.map(({ Icon, name, link }, i, k) => (
-              <Link className="flex items-center gap-1 " href={link} key={i}>
-                <Icon style={{ fill: theme.color }} />{" "}
-                <span>
-                  {name} {i < k.length - 1 && "/"}{" "}
-                </span>
-              </Link>
-            ))}
+              {paths.map(({ Icon, name, link }, i, k) => (
+                <Link className="flex items-center gap-1 " href={link} key={i}>
+                  <Icon style={{ fill: theme.color }} />{" "}
+                  <span>
+                    {name} {i < k.length - 1 && "/"}{" "}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
+          <h1
+            style={{ color: theme.color }}
+            className={"text-2xl md:text-4xl my-4 " + ribeye_Marrow.className}
+          >
+            {title}
+          </h1>
         </div>
         <div className=" flex gap-6 items-center">
           <div
@@ -157,52 +182,19 @@ export const Header = () => {
             </button>
 
             {showTimer && (
-              <div
-                className={`${orbitron.className} text-2xl`}
-                style={{ color: theme.color }}
-              >
-                {Math.floor(time / 60)} :{" "}
-                {time % 60 < 10 && time % 60 !== 0 && "0"}
-                {time % 60}
-                {time % 60 == 0 && "0"}
-                <div className="flex gap-2 justify-center">
-                  <button onClick={() => setPause((oldState) => !oldState)}>
-                    {pause && (
-                      <CiPlay1
-                        className="w-4 h-4"
-                        style={{ fill: theme.color }}
-                      />
-                    )}
-                    {!pause && (
-                      <CiPause1
-                        className="w-4 h-4"
-                        style={{ fill: theme.color }}
-                      />
-                    )}
-                  </button>
-                  <GrPowerReset
-                    className="w-4 h-4"
-                    style={{ fill: theme.color }}
-                    onClick={() => setTime(25 * 60)}
-                  />
-                  <button
-                    onClick={() =>
-                      setTimeCycle((prevCycle) =>
-                        prevCycle === "work" ? "rest" : "work"
-                      )
-                    }
-                  >
-                    <IoPlaySkipForward
-                      className="w-4 h-4"
-                      style={{ fill: theme.color }}
-                    />
-                  </button>
-                </div>
-              </div>
+              <PomodoroTimer
+                changeTime={changeTime}
+                changeTimeCycle={changeTimeCycle}
+                color={theme.color}
+                font={orbitron.className}
+                handlerPause={handlerPause}
+                pause={pause}
+                time={time}
+              />
             )}
           </div>
           <div
-            className="rounded-full border-2  w-12 h-12 p-1"
+            className="rounded-full border-2  w-16 h-16 p-1"
             style={{ borderColor: theme.color }}
           >
             <Image
@@ -215,14 +207,6 @@ export const Header = () => {
           </div>
         </div>
       </div>
-      <h1
-        style={{ color: theme.color }}
-        className={
-          "md:mt-4 -mt-8 text-2xl md:text-4xl " + ribeye_Marrow.className
-        }
-      >
-        {title}
-      </h1>
     </header>
   );
 };

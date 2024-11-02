@@ -177,7 +177,7 @@ export default function AdicionarCartao({
           Baralhos
         </h4>
         <Link
-          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end"
+          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end bg-black bg-opacity-95"
           style={{ borderColor: theme.color, color: theme.color }}
           href={`/cartoes/baralho/${params.id}/cartao/add/json`}
         >
@@ -187,7 +187,7 @@ export default function AdicionarCartao({
         </Link>
       </div>
       <form
-        className="w-full border-2 rounded-lg"
+        className="w-full border-2 rounded-lg bg-black bg-opacity-95"
         style={{ borderColor: theme.color, color: theme.color }}
         method="Post"
         onSubmit={handleSubmit}

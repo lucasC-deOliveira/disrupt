@@ -142,24 +142,24 @@ export default function Baralho({ params }: { params: { id: string } }) {
   };
 
   return (
-    <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 " style={{background:theme.background}}>
+    <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 " >
       <DeleteModal
         actionFunction={handleDelete}
         closeModal={handleCloseDeleteModal}
         isOpen={deleteModalIsOpen}
         message="Você quer mesmo apagar o baralho e todos os seus cartões?"
       />
-      <SucessModal
+      <SucessModal  
         closeModal={handleCloseSuccessModal}
         isOpen={successModalIsOpen}
         message="Baralho removido com sucesso!"
       />
       <div
-        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 "
+        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 mt-8 "
       >
         <div className="w-full flex justify-end gap-2">
           <Link
-            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
+            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             href={`/cartoes/baralho/${params.id}/cartao/add`}
           >
@@ -167,7 +167,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
             Adicionar Cartões
           </Link>
           <Link
-            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
+            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             href={`/cartoes/baralho/${params.id}/cartoes`}
           >
@@ -176,7 +176,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           </Link>
         </div>
         <div
-          className=" border-2 rounded-md  pr-1  w-full"
+          className=" border-2 rounded-md  pr-1  w-full bg-black"
           style={{ borderColor: theme.color, height:578+"px" }}
         >
           <div
@@ -278,7 +278,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
         </div>
         <div className="w-full flex justify-between ">
           <Link
-            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
+            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             href={`/cartoes/baralho/${params.id}/edit`}
           >
@@ -286,7 +286,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
             Editar
           </Link>
           <button
-            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center"
+            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             type="button"
             onClick={() => setDeleteModalIsOpen(true)}
@@ -295,7 +295,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
             Apagar
           </button>
           <Link
-            className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center"
+            className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             href={`/cartoes/baralho/${params.id}/estudar`}
           >

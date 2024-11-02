@@ -123,7 +123,7 @@ export default function Cartoes({ params }: { params: { id: string } }) {
           return (
             <div
               key={card.id}
-              className=" border-2 rounded-md p-4 relative "
+              className=" border-2 rounded-md p-4 relative bg-black "
               style={{ borderColor: theme.color }}
             >
               {card?.photo && (

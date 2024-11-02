@@ -77,7 +77,7 @@ export default function Home() {
       >
         Contador de frequência de palavras
       </h1>
-      <form className="w-full" onSubmit={(e) => onSubmit(e)}>
+      <form className="w-full  bg-black opacity-95" onSubmit={(e) => onSubmit(e)}>
         <div>
           <TextAreaDefault
             name="Qual texto deseja contar a frequência de palavras? insira aqui!"
@@ -88,7 +88,7 @@ export default function Home() {
           />
         </div>
         <button
-          className="absolute right-48 mt-2 border-2 rounded-md px-4 py-2"
+          className="absolute right-48 mt-2 border-2 rounded-md px-4 py-2  bg-black opacity-95"
           style={{ borderColor: theme.color, color: theme.color }}
         >
           Contar
@@ -96,7 +96,7 @@ export default function Home() {
       </form>
       <div className=" w-full min-h-40 my-32 rounded-md">
         <table
-          className="min-w-full table-auto border-collapse  border-solid border-2  rounded-md"
+          className="min-w-full table-auto border-collapse  border-solid border-2  rounded-md  bg-black opacity-95"
           style={{ borderColor: theme.color, color: theme.color }}
         >
           <caption className="text-lg font-semibold my-4">
@@ -151,10 +151,10 @@ export default function Home() {
             ))}
           </tbody>
         </table>
-        <div className="mt-8">
+        <div className="mt-8 ">
      
-        <h3 style={{color:theme.color}}>Pré-visualização:</h3>
-          <div className="p-4 rounded-md bg-zinc-900">
+        <h3 style={{color:theme.color}}>Palavras:</h3>
+          <div className="p-4 rounded-md  bg-black opacity-95">
             <JsonFormatter
               json={`{"words": "[${selectedWords}]"}`}
               tabWith={4}

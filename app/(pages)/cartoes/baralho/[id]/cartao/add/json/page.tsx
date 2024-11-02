@@ -169,7 +169,7 @@ export default function AdicionarCartaoJson({
         Criar Cartão
       </h3>
       <form
-        className="w-full border-2 rounded-lg p-8"
+        className="w-full border-2 rounded-lg p-8 bg-black opacity-95"
         style={{ borderColor: theme.color, color: theme.color }}
         method="Post"
         onSubmit={handleSubmit}

@@ -86,13 +86,13 @@ export default function Cartoes() {
     <section className="col-span-12 flex flex-col items-center md:block md:pl-16 md:pr-16  ">
       <div className="flex items-center justify-center flex-col lg:flex-row mb-4 mx-auto relative">
         <h4
-          className="text-2xl my-4 text-center"
+          className="text-2xl my-4 font-bold text-center"
           style={{ color: theme.color }}
         >
           Baralhos
         </h4>
         <Link
-          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end"
+          className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end bg-black"
           style={{ borderColor: theme.color, color: theme.color }}
           href="/cartoes/baralho/cadastrar"
         >
@@ -103,7 +103,7 @@ export default function Cartoes() {
       <div className="w-full  rounded-md grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">
         <Link
           href={"cartoes/baralho/cadastrar"}
-          className=" border-2 rounded-md  pr-1"
+          className=" border-2 rounded-md  pr-1 bg-black"
           style={{ borderColor: theme.color }}
         >
           <div
@@ -114,14 +114,14 @@ export default function Cartoes() {
               className=" border-2 rounded-md  h-full  p-8 flex flex-col items-center gap-4"
               style={{ borderColor: theme.color }}
             >
-              <div className="flex items-center justify-center w-full ">
+              <div className="flex items-center justify-center w-full  ">
                 <AiOutlinePlus
                   className="w-72 h-72 "
                   style={{ fill: theme.color }}
                 />
               </div>
               <h5
-                className="text-2xl md:text-2xl lg:3xl xl:text-4xl font-bold mb-6 text-center"
+                className="text-2xl md:text-2xl lg:3xl xl:text-4xl font-bold mb-6 text-center "
                 style={{ color: theme.color }}
               >
                 Novo Baralho
@@ -134,7 +134,7 @@ export default function Cartoes() {
             <Link
               key={deck.id}
               href={"cartoes/baralho/" + deck.id}
-              className=" border-2 rounded-md   pr-1"
+              className=" border-2 rounded-md   pr-1 bg-black"
               style={{ borderColor: theme.color }}
             >
               <div

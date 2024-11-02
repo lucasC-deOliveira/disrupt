@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/app/hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillSetting } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import Image from "next/image";
@@ -14,6 +14,8 @@ import lolCardSilver from "../../../public/images/lolCardFrameSilver.png";
 
 export const ConfigButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const [animationKeyframes, setAnimationKeyframes] = useState(0);
 
   const { theme, handleSetTheme } = useTheme();
 
@@ -48,10 +50,35 @@ export const ConfigButton = () => {
     });
   };
 
+  useEffect(() => {
+    const styleSheet = document.styleSheets[0];
+
+    // Remove a regra anterior, se existir
+    if (animationKeyframes) {
+      styleSheet.deleteRule(animationKeyframes);
+    }
+
+    // Adiciona novos keyframes para pulsação do neon
+    const ruleIndex = styleSheet.insertRule(`
+      @keyframes pulseNeon {
+        0%, 100% {
+          box-shadow: 0 0 10px ${theme.color}, 0 0 20px ${theme.color}, 0 0 35px ${theme.color}, 0 0 40px ${theme.color};
+        }
+        50% {
+          box-shadow: 0 0 20px ${theme.color}, 0 0 30px ${theme.color}, 0 0 55px ${theme.color}, 0 0 60px ${theme.color};
+        }
+      }
+    `);
+
+    // Atualiza o estado com o índice da regra de keyframes para futura remoção
+    setAnimationKeyframes(ruleIndex);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ theme.color]);
+
   if (!isOpen) {
     return (
       <button
-        className="w-8 h-8  border-2 rounded-md items-center justify-center flex"
+        className="w-8 h-8  border-2 rounded-md items-center justify-center flex bg-black shadow-2xl"
         style={{ borderColor: theme.color }}
         onClick={() => handleOpenButton()}
       >

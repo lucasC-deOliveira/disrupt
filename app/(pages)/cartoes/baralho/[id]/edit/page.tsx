@@ -168,7 +168,7 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
       >
         <form className="col-span-12 lg:col-span-5 lg:col-start-4 xl:col-span-3 xl:col-start-5" method="Post" onSubmit={handleSubmit}>
           <div
-            className="w-full border-2 rounded-2xl px-8 pt-24  "
+            className="w-full border-2 rounded-2xl px-8 pt-24  bg-black opacity-95 "
             style={{
               borderColor: theme.color,
               color: theme.color,
@@ -220,7 +220,7 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
           </div>
           <div className="w-full flex justify-center items-center mt-4">
             <button
-              className="border-2 rounded-md p-4 w-32"
+              className="border-2 rounded-md p-4 w-32  bg-black opacity-95"
               style={{ borderColor: theme.color, color: theme.color }}
               type="submit"
             >
