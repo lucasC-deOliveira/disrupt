@@ -9,7 +9,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <MyHeaderProvider>
       <ThemeProvider>
-      <Snowfall snowflakeCount={200} />
+      {/* <Snowfall snowflakeCount={200} /> */}
         <ApolloWrapper>{children}</ApolloWrapper>
       </ThemeProvider>
     </MyHeaderProvider>

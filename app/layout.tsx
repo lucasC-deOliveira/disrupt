@@ -5,7 +5,7 @@ import { Sidebar } from "./componens/Sidebar";
 import { Header } from "./componens/Header";
 import { ConfigButton } from "./componens/ConfigButton";
 import Providers from "./hooks/providers";
-import colorful from "../public/images/natalNeon.jpg";
+import colorful from "../public/images/wall.jpg";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -40,9 +40,9 @@ export default function RootLayout({
           <main className="col-span-12 md:col-span-8 lg:col-span-10 ">
             {children}
           </main>
-          <div className="absolute top-44 right-12">
+          {/* <div className="absolute top-44 right-12">
             <ConfigButton />
-          </div>
+          </div> */}
         </Providers>
       </body>
     </html>

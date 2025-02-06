@@ -17,7 +17,6 @@ import lolCardRed from "../../../../../../public/images/lolCardFrameRed.png";
 import lolCardDarkBlue from "../../../../../../public/images/lolCardFrameDarkBlue.png";
 import lolCardGold from "../../../../../../public/images/lolCardFrameGold.png";
 import lolCardSilver from "../../../../../../public/images/lolCardFrameSilver.png";
-import metalTexture from "../../../../../../public/images/texturemetal.jpg";
 
 const cardFrame: any = {
   blue: lolCardBlue.src,
@@ -125,16 +124,10 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
     "Very Hard": 60,
     Hard: 5 * 60,
     Normal:
-      card?.times > 1 &&
-      card?.evaluation === "Normal" &&
-      60 * 30 * (card?.times + 1) < 259200
-        ? 60 * 30 * (card?.times + 1)
-        : 259200,
+      ((60 * 30 * (card?.times || 1)) < 259200 ? (60 * 30 * (card?.times || 1)) : 259200 ) ,
     Easy:
-      card?.times > 1 &&
-      card?.evaluation === "Easy" &&
-      60 * 60 * 24 * 3 * (card?.times + 1) < 7776000
-        ? 60 * 60 * 24 * 3 * (card?.times + 1)
+      60 * 60 * 24 * 3 * (card?.times  || 1) < 7776000
+        ? 60 * 60 * 24 * 3 * (card?.times || 1)
         : 7776000,
   };
 
@@ -154,10 +147,10 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
 
     // Monta a string de resultado
     const result = [];
-    if (months > 0) result.push(`${months} ${months === 1 ? "mês" : "meses"}`);
-    if (days > 0) result.push(`${days} ${days === 1 ? "dia" : "dias"}`);
-    if (hours > 0) result.push(`${hours} ${hours === 1 ? "hora" : "horas"}`);
-    if (minutes > 0) result.push(`${minutes} ${minutes === 1 ? "min" : "min"}`);
+    if (months > 0) result.push(`${months} M`);
+    if (days > 0) result.push(`${days} D`);
+    if (hours > 0) result.push(`${hours} H`);
+    if (minutes > 0) result.push(`${minutes} Min`);
 
     // Retorna a string formatada
     return result.join(", ");
@@ -197,6 +190,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       }
     }
   }, [data, error?.message, params.id, refetch]);
+  
 
   return (
     <section
@@ -378,6 +372,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                   >
                     {" "}
                     {formatTime(evalStrategy["Hard"])}
+
                   </span>
                   <button
                     className="  p-2 border-2 rounded-md text-lg"
