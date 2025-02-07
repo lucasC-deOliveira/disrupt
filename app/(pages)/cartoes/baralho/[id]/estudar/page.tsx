@@ -3,8 +3,8 @@
 import { useTheme } from "@/app/hooks/useTheme";
 import Image from "next/image";
 import { CSSProperties, useCallback, useEffect, useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { PacmanLoader } from "react-spinners";
+// import { gql, useMutation, useQuery } from "@apollo/client";
+import { FadeLoader } from "react-spinners";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
 import { useMyHeader } from "@/app/hooks/navigation";
@@ -30,6 +30,8 @@ const cardFrame: any = {
 
 // @ts-ignore
 import { SayButton } from "react-say";
+import { answerCard, findCardByDeckIdAndMostLateShowDataTime, getDeckById, syncDeckToServer, syncFromServer, syncToServer } from "@/app/lib/pouchDb";
+import { answerCardEvaluationTimeStrategy } from "@/app/utils/AnswerCardEvaluationTimeStrategy";
 
 interface Card {
   answer: string;
@@ -42,77 +44,98 @@ interface Card {
   id: string;
 }
 
-const GET_CARD_BY_DECK_ID = gql`
-  query GetCardByDeckId($id: String!, $itemsPerPage: String!, $page: String!) {
-    getAllCardsByDeckid(id: $id, page: $page, itemsPerPage: $itemsPerPage) {
-      answer
-      photo
-      title
-      showDataTime
-      evaluation
-      times
-      id
-    }
-  }
-`;
+// const GET_CARD_BY_DECK_ID = gql`
+//   query GetCardByDeckId($id: String!, $itemsPerPage: String!, $page: String!) {
+//     getAllCardsByDeckid(id: $id, page: $page, itemsPerPage: $itemsPerPage) {
+//       answer
+//       photo
+//       title
+//       showDataTime
+//       evaluation
+//       times
+//       id
+//     }
+//   }
+// `;
 
-const EDIT_CARD_EVALUATION = gql`
-  mutation AnswerCard($id: String!, $evaluation: String!) {
-    answerCard(data: { id: $id, evaluation: $evaluation }) {
-      id
-      evaluation
-    }
-  }
-`;
+// const EDIT_CARD_EVALUATION = gql`
+//   mutation AnswerCard($id: String!, $evaluation: String!) {
+//     answerCard(data: { id: $id, evaluation: $evaluation }) {
+//       id
+//       evaluation
+//     }
+//   }
+// `;
+
 
 export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const { theme } = useTheme();
   const [face, setFace] = useState<"frente" | "verso">("frente");
   const [card, setCard] = useState<Card>({} as Card);
-  const [answerCard] = useMutation(EDIT_CARD_EVALUATION);
+  // const [answerCard] = useMutation(EDIT_CARD_EVALUATION);
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
-  const { loading, error, data, refetch } = useQuery(GET_CARD_BY_DECK_ID, {
-    variables: { id: params.id, itemsPerPage: "1", page: "1" },
-  });
+  // const { loading, error, data, refetch } = useQuery(GET_CARD_BY_DECK_ID, {
+  //   variables: { id: params.id, itemsPerPage: "1", page: "1" },
+  // });
+
+  let [loading, setLoading] = useState(false);
+
 
   const handleShowAnswer = () => {
     setFace("verso");
   };
 
+
   useEffect(() => {
+    syncFromServer()
+    findCardByDeckIdAndMostLateShowDataTime(params.id).then((card) => {
+      if (card) {
+        setCard(card);
+      }
+    })
+    getDeckById(params.id).then((deck) => {
+      let deckTitle = "";
+
+      if (deck) {
+        deckTitle = deck.title;
+      }
+      changePaths([
+        {
+          name: "Home",
+          Icon: BiSolidHomeHeart,
+          link: "/cartoes",
+        },
+        {
+          name: "Cartões",
+          Icon: AiFillCreditCard,
+          link: "/cartoes",
+        },
+        {
+          name: "Baralhos",
+          Icon: MdLibraryBooks,
+          link: "/cartoes",
+        },
+        {
+          name: deckTitle || "Baralho",
+          Icon: BsValentine2,
+          link: `/cartoes/baralho/${params.id}/`,
+        },
+        {
+          name: "Estudar",
+          Icon: PiStudentBold,
+          link: `/cartoes/baralho/${params.id}/estudar`,
+        },
+      ]);
+    });
     changeTitle("Cartões");
-    changePaths([
-      {
-        name: "Home",
-        Icon: BiSolidHomeHeart,
-        link: "/cartoes",
-      },
-      {
-        name: "Cartões",
-        Icon: AiFillCreditCard,
-        link: "/cartoes",
-      },
-      {
-        name: "Baralhos",
-        Icon: MdLibraryBooks,
-        link: "/cartoes",
-      },
-      {
-        name: "Baralho",
-        Icon: BsValentine2,
-        link: `/cartoes/baralho/${params.id}/`,
-      },
-      {
-        name: "Estudar",
-        Icon: PiStudentBold,
-        link: `/cartoes/baralho/${params.id}/estudar`,
-      },
-    ]);
+
     changeBackButton(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
   const override: CSSProperties = {
     display: "block",
@@ -120,16 +143,6 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
     borderColor: theme.color,
   };
 
-  const evalStrategy = {
-    "Very Hard": 60,
-    Hard: 5 * 60,
-    Normal:
-      ((60 * 30 * (card?.times || 1)) < 259200 ? (60 * 30 * (card?.times || 1)) : 259200 ) ,
-    Easy:
-      60 * 60 * 24 * 3 * (card?.times  || 1) < 7776000
-        ? 60 * 60 * 24 * 3 * (card?.times || 1)
-        : 7776000,
-  };
 
   function formatTime(seconds: number) {
     const SECONDS_IN_MINUTE = 60;
@@ -159,54 +172,62 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const evaluateAnswer = (
     evaluation: "Very Hard" | "Hard" | "Normal" | "Easy"
   ) => {
-    return answerCard({ variables: { id: card.id, evaluation } }).then(() => {
-      refetch();
+    return answerCard(params.id, card.id, evaluation).then(() => {
+      syncDeckToServer(params.id)
+      setLoading(true);
       setFace("frente");
       setCard({} as Card);
+      findCardByDeckIdAndMostLateShowDataTime(params.id).then((card) => {
+        if (card) {
+          setCard(card);
+        }
+        setLoading(false);
+      })
     });
   };
 
-  useEffect(() => {
-    if (data) {
-      if (data?.getAllCardsByDeckid) {
-        const GetCardByDeckId = data.getAllCardsByDeckid;
-        if (GetCardByDeckId.length > 0) {
-          const newCard = {
-            answer: GetCardByDeckId[0].answer,
-            deckId: params.id,
-            evaluation: GetCardByDeckId[0].evaluation,
-            photo: GetCardByDeckId[0].photo,
-            showDataTime: GetCardByDeckId[0].showDataTime,
-            times: GetCardByDeckId[0].times,
-            title: GetCardByDeckId[0].title,
-            id: GetCardByDeckId[0].id,
-          };
-          setCard(newCard);
-        }
-      }
+  // useEffect(() => {
+  //   if (data) {
+  //     if (data?.getAllCardsByDeckid) {
+  //       const GetCardByDeckId = data.getAllCardsByDeckid;
+  //       if (GetCardByDeckId.length > 0) {
+  //         const newCard = {
+  //           answer: GetCardByDeckId[0].answer,
+  //           deckId: params.id,
+  //           evaluation: GetCardByDeckId[0].evaluation,
+  //           photo: GetCardByDeckId[0].photo,
+  //           showDataTime: GetCardByDeckId[0].showDataTime,
+  //           times: GetCardByDeckId[0].times,
+  //           title: GetCardByDeckId[0].title,
+  //           id: GetCardByDeckId[0].id,
+  //         };
+  //         setCard(newCard);
+  //       }
+  //     }
 
-      if (error?.message === "Failed to fetch") {
-        refetch();
-      }
-    }
-  }, [data, error?.message, params.id, refetch]);
-  
+  //     if (error?.message === "Failed to fetch") {
+  //       refetch();
+  //     }
+  //   }
+  // }, [data, error?.message, params.id, refetch]);
+
+
+
 
   return (
     <section
       className="w-full grid grid-cols-12 pl-16 pr-16 bg-transparent "
-      // style={{ background: theme.background }}
+    // style={{ background: theme.background }}
     >
       {loading && (
         <div
           className="col-span-12 mt-56 flex flex-col items-center justify-center"
           style={{ color: theme.color }}
         >
-          <PacmanLoader
+          <FadeLoader
             color={theme.color}
             loading={loading}
             cssOverride={override}
-            size={100}
             aria-label="Carregando o card!"
             data-testid="loader"
           />
@@ -220,10 +241,10 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
               <div
                 className="-top-6 mt-9 absolute z-180 bg-black "
                 style={{ width: 440, height: 800 }}
-                // src={metalTexture.src}
-                // width={500}
-                // height={500}
-                // alt="a"
+              // src={metalTexture.src}
+              // width={500}
+              // height={500}
+              // alt="a"
               ></div>
               <Image
                 src={cardFrame[theme.cardFrame]}
@@ -354,7 +375,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="block text-lg"
                     style={{ color: theme.color }}
                   >
-                    {formatTime(evalStrategy["Very Hard"])}
+                    {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Very Hard" ? card.times : 1, "Very Hard"))}
                   </span>
                   <button
                     className="  p-2 border-2 rounded-md  text-lg"
@@ -371,9 +392,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     style={{ color: theme.color }}
                   >
                     {" "}
-                    {formatTime(evalStrategy["Hard"])}
-
-                  </span>
+                    {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Hard" ? card.times : 1, "Hard"))}               </span>
                   <button
                     className="  p-2 border-2 rounded-md text-lg"
                     style={{ borderColor: theme.color, color: theme.color }}
@@ -388,8 +407,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="block text-lg"
                     style={{ color: theme.color }}
                   >
-                    {formatTime(evalStrategy["Normal"])}
-                  </span>
+                    {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Normal" ? card.times : 1, "Normal"))}             </span>
                   <button
                     className="  p-2 border-2 rounded-md text-lg"
                     style={{ borderColor: theme.color, color: theme.color }}
@@ -404,8 +422,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
                     className="block text-lg"
                     style={{ color: theme.color }}
                   >
-                    {formatTime(evalStrategy["Easy"])}
-                  </span>
+                    {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Easy" ? card.times : 1, "Easy"))}             </span>
                   <button
                     className="  p-2 border-2 rounded-md text-lg"
                     style={{ borderColor: theme.color, color: theme.color }}

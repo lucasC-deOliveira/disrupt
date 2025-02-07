@@ -17,6 +17,8 @@
     "json-formatter-js": "^2.5.18",
     "marked": "^14.1.2",
     "next": "14.2.3",
+    "pouchdb": "^9.0.0",
+    "pouchdb-browser": "^9.0.0",
     "prettier": "^3.3.3",
     "react": "^18",
     "react-ace": "^12.0.0",
@@ -26,10 +28,12 @@
     "react-say": "^2.1.0",
     "react-snowfall": "^2.1.1",
     "react-spinners": "^0.14.1",
+    "socket.io-client": "^4.8.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pouchdb-browser": "^6.1.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.8",

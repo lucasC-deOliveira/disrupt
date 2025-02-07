@@ -16,6 +16,7 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
+import { getAllDocs, getDocById, syncFromServer } from "@/app/lib/pouchDb";
 
 interface Card {
   answer: string;
@@ -62,9 +63,9 @@ export default function Baralho({ params }: { params: { id: string } }) {
 
   const [deck, setDeck] = useState<Deck>({} as Deck);
 
-  const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
-    variables: { id: params.id },
-  });
+  // const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
+  //   variables: { id: params.id },
+  // });
 
   const [removeDeck, removeDeckMutationController] = useMutation(REMOVE_DECK, {
     variables: { id: params.id },
@@ -86,18 +87,43 @@ export default function Baralho({ params }: { params: { id: string } }) {
     setSuccessModalIsOpen(false);
   };
 
+  // useEffect(() => {
+  //   if (data) {
+  //     if (data?.getDeckById) {
+  //       const newDeck = data.getDeckById;
+  //       // console.log(newDeck.cards)
+  //       setDeck(newDeck);
+  //     }
+  //     if (error?.message === "Failed to fetch") {
+  //       refetch();
+  //     }
+  //   }
+  // }, [data, error?.message, refetch]);
+
   useEffect(() => {
-    if (data) {
-      if (data?.getDeckById) {
-        const newDeck = data.getDeckById;
-        // console.log(newDeck.cards)
-        setDeck(newDeck);
-      }
-      if (error?.message === "Failed to fetch") {
-        refetch();
-      }
-    }
-  }, [data, error?.message, refetch]);
+    syncFromServer().then(() => getDocById(params.id)
+      .then((decksResponse) => {
+        if (decksResponse) {
+          const newDeck: Deck = {
+            title: decksResponse.title,
+            photo: decksResponse.photo,
+            id: decksResponse.id,
+            cards: decksResponse.cards.map(card => ({
+              answer: card.answer,
+              photo: card.photo,
+              title: card.title,
+              showDataTime: card.showDataTime,
+              evaluation: card.evaluation,
+              times: card.times,
+              id: card.id,
+              deckId: decksResponse.id,
+              type: 'default'
+            }))
+          };
+          setDeck(newDeck);
+        }
+      })    );
+  }, []);
 
   useEffect(() => {
     changeTitle("Cartões");
@@ -133,12 +159,12 @@ export default function Baralho({ params }: { params: { id: string } }) {
       handleCloseDeleteModal();
 
       setSuccessModalIsOpen(true);
-  
+
       setTimeout(() => {
         handleCloseSuccessModal();
         replace("/cartoes");
       }, 2000);
-    })  
+    })
   };
 
   return (
@@ -149,7 +175,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
         isOpen={deleteModalIsOpen}
         message="Você quer mesmo apagar o baralho e todos os seus cartões?"
       />
-      <SucessModal  
+      <SucessModal
         closeModal={handleCloseSuccessModal}
         isOpen={successModalIsOpen}
         message="Baralho removido com sucesso!"
@@ -177,7 +203,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
         </div>
         <div
           className=" border-2 rounded-md  pr-1  w-full bg-black"
-          style={{ borderColor: theme.color, height:578+"px" }}
+          style={{ borderColor: theme.color, height: 578 + "px" }}
         >
           <div
             className=" border-2 rounded-md h-full  pr-1"
@@ -198,7 +224,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
               </div>
               <div
                 className="flex w-full items-center justify-center  rounded-md border-2  mb-8"
-                style={{ borderColor: theme.color, height:250+"px" }}
+                style={{ borderColor: theme.color, height: 250 + "px" }}
               >
                 <Image
                   src={deck.photo}

@@ -11,7 +11,8 @@ import { ReactNode } from "react";
 
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: 'https://disrupt-backend.onrender.com/graphql',
+    // uri: 'https://disrupt-backend.onrender.com/graphql',
+    uri: process.env.NEXT_PUBLIC_APIBACKEND,
     fetchOptions: { cache: "no-store" },
   });
 
