@@ -94,7 +94,8 @@ export default function Cartoes() {
   // }, [data, error, refetch]);
 
   useEffect(() => {
-    syncFromServer().then(() => getAllDocs()
+    syncFromServer()
+    getAllDocs()
       .then((decksResponse) => {
         const newDecks = decksResponse
           .map(deck => ({
@@ -113,8 +114,8 @@ export default function Cartoes() {
           }))
           setDecks(newDecks);
       })
-    );
-    syncToServer()
+    
+    setTimeout(syncToServer,3000)
   }, []);
 
   useEffect(() => {

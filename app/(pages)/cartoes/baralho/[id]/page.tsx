@@ -101,7 +101,8 @@ export default function Baralho({ params }: { params: { id: string } }) {
   // }, [data, error?.message, refetch]);
 
   useEffect(() => {
-    syncFromServer().then(() => getDocById(params.id)
+    syncFromServer()
+    getDocById(params.id)
       .then((decksResponse) => {
         if (decksResponse) {
           const newDeck: Deck = {
@@ -122,7 +123,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           };
           setDeck(newDeck);
         }
-      })    );
+      })
   }, []);
 
   useEffect(() => {
