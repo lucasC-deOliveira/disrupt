@@ -114,9 +114,7 @@ export default function Cartoes() {
           setDecks(newDecks);
       })
     );
-
-    const interval = setInterval(syncToServer, 60000); // Sincroniza a cada 1 minuto
-    return () => clearInterval(interval);
+    syncToServer()
   }, []);
 
   useEffect(() => {

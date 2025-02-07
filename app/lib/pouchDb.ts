@@ -81,7 +81,7 @@ export async function syncToServer() {
 
     try {
        
-        const result = await fetch(`http://localhost:3333/sync`, {
+        const result = await fetch(process.env.NEXT_PUBLIC_APIBACKEND_REST || '', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ decks: formattedDocs }),
@@ -92,52 +92,55 @@ export async function syncToServer() {
     }
 }
 export async function syncFromServer() {
-    const query = `
-      query {
-        getAllDecks {
-          id
-          title
-          photo
-          cards {
-            id
-            title
-            answer
-            photo
-            showDataTime
-            evaluation
-            times
-            type
+    try {
+        const query = `
+          query {
+            getAllDecks {
+              id
+              title
+              photo
+              cards {
+                id
+                title
+                answer
+                photo
+                showDataTime
+                evaluation
+                times
+                type
+              }
+            }
           }
-        }
-      }
-    `;
-
-    const response = await fetch(process.env.NEXT_PUBLIC_APIBACKEND || ``, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
-    });
-
-    const { data } = await response.json();
-
-    for (const deck of data.getAllDecks) {
-        try {
-            if (!deck._id) {
-                deck._id = deck.id || uuidv4();
+        `;
+    
+        const response = await fetch(process.env.NEXT_PUBLIC_APIBACKEND || ``, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query }),
+        });
+    
+        const { data } = await response.json();
+    
+        for (const deck of data.getAllDecks) {
+            try {
+                if (!deck._id) {
+                    deck._id = deck.id || uuidv4();
+                }
+    
+                const existing = await db.get(deck._id).catch(() => null);
+                if (existing) {
+                    await db.put({ ...existing, ...deck }); // Atualiza documento existente
+                } else {
+                    await db.put(deck); // Insere novo documento
+                }
+            } catch (error) {
+                console.error('Erro ao sincronizar deck:', error);
             }
-
-            const existing = await db.get(deck._id).catch(() => null);
-            if (existing) {
-                await db.put({ ...existing, ...deck }); // Atualiza documento existente
-            } else {
-                await db.put(deck); // Insere novo documento
-            }
-        } catch (error) {
-            console.error('Erro ao sincronizar:', error);
         }
+    } catch (error) {
+        console.error('Erro na requisição syncFromServer:', error);
     }
 }
-
 export async function getDocById(id: string): Promise<DocumentType | undefined> {
     try {
         const doc = await db.get(id);
