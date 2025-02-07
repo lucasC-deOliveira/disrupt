@@ -16,7 +16,7 @@ import lolCardRed from "../../../../../../public/images/lolCardFrameRed.png";
 import lolCardDarkBlue from "../../../../../../public/images/lolCardFrameDarkBlue.png";
 import lolCardGold from "../../../../../../public/images/lolCardFrameGold.png";
 import lolCardSilver from "../../../../../../public/images/lolCardFrameSilver.png";
-import { answerCard, findCardByDeckIdAndMostLateShowDataTime, getDeckById, syncDeckToServer, syncFromServer } from "@/app/lib/pouchDb";
+import { answerCard, findCardByDeckIdAndMostLateShowDataTime, findCardsByDeckIdAndMostLateShowDataTimeAndQtd, getDeckById, syncDeckToServer, syncFromServer } from "@/app/lib/pouchDb";
 import { CardFront } from "@/app/componens/CardComponentFront";
 import { CardBack } from "@/app/componens/CardComponentBack";
 import { Card } from "@/app/interfaces/Card";
@@ -37,6 +37,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const [card, setCard] = useState<Card>({} as Card);
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
   let [loading, setLoading] = useState(false);
+  const [cards, setCards] = useState<Card[]>([]);
 
   const override: CSSProperties = {
     display: "block",
@@ -55,22 +56,36 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       setLoading(true);
       setFace("frente");
       setCard({} as Card);
-      findCardByDeckIdAndMostLateShowDataTime(params.id).then((card) => {
-        if (card) {
-          setCard(card);
-        }
+
+      if (cards.length > 0) {
+        setCard(cards[0]);
+        setCards(cards.slice(1, cards.length));
         setLoading(false);
-      })
+      }
+      else {
+        findCardsByDeckIdAndMostLateShowDataTimeAndQtd(params.id, 50).then((cards) => {
+          if (cards.length > 0) {
+            setCard(cards[0]);
+          }
+          setCards(cards.slice(1, cards.length));
+          setLoading(false);
+        })
+      }
+
+
     });
   };
 
   useEffect(() => {
     syncFromServer()
-    findCardByDeckIdAndMostLateShowDataTime(params.id).then((card) => {
-      if (card) {
-        setCard(card);
+    findCardsByDeckIdAndMostLateShowDataTimeAndQtd(params.id, 50).then((cards) => {
+      if (cards.length > 0) {
+        setCard(cards[0]);
       }
+      setCards(cards.slice(1, cards.length));
+      setLoading(false);
     })
+
     getDeckById(params.id).then((deck) => {
       let deckTitle = "";
 

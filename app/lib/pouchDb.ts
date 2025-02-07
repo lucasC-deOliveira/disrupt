@@ -169,6 +169,25 @@ export async function findCardByDeckIdAndMostLateShowDataTime(deckId: string): P
     }
 }
 
+export async function findCardsByDeckIdAndMostLateShowDataTimeAndQtd(deckId: string, quantity: number): Promise<CardType[]> {
+    try {
+        const deck = await db.get(deckId);
+        const now = new Date();
+        // Filtra os cards que estão atrasados
+        const overdueCards = deck.cards.filter(card => new Date(card.showDataTime) < now);
+        if (overdueCards.length === 0) {
+            return [];
+        }
+        // Ordena os cards de forma que o com showDataTime mais antiga (mais atrasado) venha primeiro
+        overdueCards.sort((a, b) => new Date(a.showDataTime).getTime() - new Date(b.showDataTime).getTime());
+        // Retorna a quantidade solicitada de cards
+        return overdueCards.slice(0, quantity);
+    } catch (error) {
+        console.error('Erro ao buscar cards atrasados:', error);
+        return [];
+    }
+}
+
 export async function answerCard(deckId: string, cardId: string, evaluation: "Very Hard" | "Hard" | "Normal" | "Easy"): Promise<PouchDB.Core.Response | undefined> {
     try {
         // Busca o deck com base no deckId
