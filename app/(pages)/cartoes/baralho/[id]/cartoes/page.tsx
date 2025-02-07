@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = "force-dynamic";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { useTheme } from "@/app/hooks/useTheme";
 import { gql, useMutation, useQuery } from "@apollo/client";
