@@ -5,7 +5,7 @@ import { useTheme } from "@/app/hooks/useTheme";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { BsValentine2 } from "react-icons/bs";
@@ -46,11 +46,13 @@ const DELETE_CARD_BY_ID = gql`
     }
   }
 `;
-export default function Cartoes({ params }: { params: { id: string } }) {
+export default function Cartoes({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
 
+  const id = use(params).id;
+
   const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
-    variables: { id: params.id },
+    variables: { id: id},
   });
 
   const [deleteCard, controllerDelete] = useMutation(DELETE_CARD_BY_ID);
@@ -95,12 +97,12 @@ export default function Cartoes({ params }: { params: { id: string } }) {
       {
         name: deckTitle ? deckTitle : "baralho",
         Icon: BsValentine2,
-        link:`/cartoes/baralho/${params.id}`
+        link:`/cartoes/baralho/${id}`
       },
       {
         name: "Abrir baralho",
         Icon: FaBoxOpen,
-        link:`/cartoes/baralho/${params.id}/cartoes`
+        link:`/cartoes/baralho/${id}/cartoes`
       },
     ]);
     changeBackButton(true);
@@ -160,7 +162,7 @@ export default function Cartoes({ params }: { params: { id: string } }) {
                 <Link
                   className=" w-2/4 p-2 border-2 rounded-md text-md lg:text-xl  flex items-center gap-2 justify-center"
                   style={{ borderColor: theme.color, color: theme.color }}
-                  href={`/cartoes/baralho/${params.id}/cartoes/${card.id}/edit`}
+                  href={`/cartoes/baralho/${id}/cartoes/${card.id}/edit`}
                 >
                   <LuPencilLine
                     className="w-4 h-4  min-w-4 "

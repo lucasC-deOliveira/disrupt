@@ -2,7 +2,7 @@
 
 import { useTheme } from "@/app/hooks/useTheme";
 import Image from "next/image";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, use, useEffect, useState } from "react";
 import { FadeLoader } from "react-spinners";
 import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
@@ -31,13 +31,14 @@ const cardFrame: any = {
   "": "",
 };
 
-export default function EstudarBaralho({ params }: { params: { id: string } }) {
+export default function EstudarBaralho({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
   const [face, setFace] = useState<"frente" | "verso">("verso");
   const [card, setCard] = useState<Card>({} as Card);
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
   let [loading, setLoading] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
+  const id = use(params).id;
 
   const override: CSSProperties = {
     display: "block",
@@ -51,8 +52,8 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
   const evaluateAnswer = (
     evaluation: "Very Hard" | "Hard" | "Normal" | "Easy"
   ) => {
-    return answerCard(params.id, card.id, evaluation).then(() => {
-      syncDeckToServer(params.id)
+    return answerCard(id, card.id, evaluation).then(() => {
+      syncDeckToServer(id)
       setLoading(true);
       setFace("frente");
       setCard({} as Card);
@@ -63,7 +64,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         setLoading(false);
       }
       else {
-        findCardsByDeckIdAndMostLateShowDataTimeAndQtd(params.id, 50).then((cards) => {
+        findCardsByDeckIdAndMostLateShowDataTimeAndQtd(id, 50).then((cards) => {
           if (cards.length > 0) {
             setCard(cards[0]);
           }
@@ -78,7 +79,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     syncFromServer()
-    findCardsByDeckIdAndMostLateShowDataTimeAndQtd(params.id, 50).then((cards) => {
+    findCardsByDeckIdAndMostLateShowDataTimeAndQtd(id, 50).then((cards) => {
       if (cards.length > 0) {
         setCard(cards[0]);
       }
@@ -86,7 +87,7 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
       setLoading(false);
     })
 
-    getDeckById(params.id).then((deck) => {
+    getDeckById(id).then((deck) => {
       let deckTitle = "";
 
       if (deck) {
@@ -111,12 +112,12 @@ export default function EstudarBaralho({ params }: { params: { id: string } }) {
         {
           name: deckTitle || "Baralho",
           Icon: BsValentine2,
-          link: `/cartoes/baralho/${params.id}/`,
+          link: `/cartoes/baralho/${id}/`,
         },
         {
           name: "Estudar",
           Icon: PiStudentBold,
-          link: `/cartoes/baralho/${params.id}/estudar`,
+          link: `/cartoes/baralho/${id}/estudar`,
         },
       ]);
     });

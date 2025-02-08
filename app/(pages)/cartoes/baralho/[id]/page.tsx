@@ -6,7 +6,7 @@ import { PiStudentFill } from "react-icons/pi";
 import { AiFillCreditCard, AiOutlinePlus } from "react-icons/ai";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuPencilLine } from "react-icons/lu";
-import { useEffect, useState } from "react";
+import { CSSProperties, use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeleteModal } from "@/app/componens/DeleteModal";
 import { SucessModal } from "@/app/componens/SuccessModal";
@@ -17,6 +17,7 @@ import { useMyHeader } from "@/app/hooks/navigation";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
 import { getAllDocs, getDocById, syncFromServer } from "@/app/lib/pouchDb";
+import { FadeLoader } from "react-spinners";
 
 interface Card {
   answer: string;
@@ -58,7 +59,7 @@ const REMOVE_DECK = gql`
   }
 `;
 
-export default function Baralho({ params }: { params: { id: string } }) {
+export default function Baralho({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
 
   const [deck, setDeck] = useState<Deck>({} as Deck);
@@ -67,8 +68,16 @@ export default function Baralho({ params }: { params: { id: string } }) {
   //   variables: { id: params.id },
   // });
 
+  const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: theme.color,
+  };
+
+  const id = use(params).id;
+
   const [removeDeck, removeDeckMutationController] = useMutation(REMOVE_DECK, {
-    variables: { id: params.id },
+    variables: { id: id },
   });
 
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
@@ -102,7 +111,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     syncFromServer()
-    getDocById(params.id)
+    getDocById(id)
       .then((decksResponse) => {
         if (decksResponse) {
           const newDeck: Deck = {
@@ -148,7 +157,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
       {
         name: deck?.title ? deck.title : "baralho",
         Icon: BsValentine2,
-        link: `/cartoes/baralho/${params.id}`,
+        link: `/cartoes/baralho/${id}`,
       },
     ]);
     changeBackButton(true);
@@ -168,6 +177,22 @@ export default function Baralho({ params }: { params: { id: string } }) {
       }, 2000);
     })
   };
+
+  if (!deck?.id) {
+    return (<div
+      className="col-span-12 mt-56 flex flex-col items-center justify-center"
+      style={{ color: theme.color }}
+    >
+      <FadeLoader
+        color={theme.color}
+        loading={true}
+        cssOverride={override}
+        aria-label="Carregando o card!"
+        data-testid="loader"
+      />
+      Carregando o card!...
+    </div>)
+  }
 
   return (
     <section className="col-span-12  grid grid-cols-12 pl-16 pr-16 " >
@@ -189,7 +214,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${params.id}/cartao/add`}
+            href={`/cartoes/baralho/${id}/cartao/add`}
           >
             <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
             Adicionar Cartões
@@ -197,7 +222,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${params.id}/cartoes`}
+            href={`/cartoes/baralho/${id}/cartoes`}
           >
             {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
             Abrir Deck
@@ -308,7 +333,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${params.id}/edit`}
+            href={`/cartoes/baralho/${id}/edit`}
           >
             <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
             Editar
@@ -325,7 +350,7 @@ export default function Baralho({ params }: { params: { id: string } }) {
           <Link
             className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${params.id}/estudar`}
+            href={`/cartoes/baralho/${id}/estudar`}
           >
             <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
             Estudar

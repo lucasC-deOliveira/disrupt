@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
@@ -42,11 +42,7 @@ const CREATE_CARD = gql`
   }
 `;
 
-export default function AdicionarCartao({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function AdicionarCartao({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
 
   const [photo, setPhoto] = useState<File | null>(null);
@@ -62,6 +58,8 @@ export default function AdicionarCartao({
   const [createCard, { data, loading, error }] = useMutation(CREATE_CARD);
 
   const [type, setType] = useState<"with image" | "text">("text");
+
+  const id = use(params).id;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -88,7 +86,7 @@ export default function AdicionarCartao({
               evaluation: "Very Hard",
               times: 0,
               showDataTime: new Date().toISOString(),
-              deckId: params.id,
+              deckId: id,
               type,
             },
           },
@@ -98,7 +96,7 @@ export default function AdicionarCartao({
 
             setTimeout(() => {
               handleCloseSuccessModal();
-              replace("/cartoes/baralho/" + params.id);
+              replace("/cartoes/baralho/" + id);
             }, 2000);
           })
           .catch((e): any => console.log(e.message));
@@ -115,7 +113,7 @@ export default function AdicionarCartao({
             evaluation: "Very Hard",
             times: 0,
             showDataTime: new Date().toISOString(),
-            deckId: params.id,
+            deckId: id,
             type,
           },
         },
@@ -125,7 +123,7 @@ export default function AdicionarCartao({
 
           setTimeout(() => {
             handleCloseSuccessModal();
-            replace("/cartoes/baralho/" + params.id);
+            replace("/cartoes/baralho/" + id);
           }, 2000);
         })
         .catch((e): any => console.log(e.message));
@@ -155,11 +153,11 @@ export default function AdicionarCartao({
       {
         name: "baralho",
         Icon: BsValentine2,
-        link:`/cartoes/baralho/${params.id}`
+        link:`/cartoes/baralho/${id}`
       },
       { name: "Adicionar cartão", 
         Icon: IoMdAddCircle, 
-        link:`/cartoes/baralho/${params.id}/cartao/add` },
+        link:`/cartoes/baralho/${id}/cartao/add` },
 
     ]);
     changeBackButton(true);
@@ -179,7 +177,7 @@ export default function AdicionarCartao({
         <Link
           className=" w-44 p-2 border-2 rounded-md flex gap-4 lg:absolute right-0 items-center justify-center self-end bg-black bg-opacity-95"
           style={{ borderColor: theme.color, color: theme.color }}
-          href={`/cartoes/baralho/${params.id}/cartao/add/json`}
+          href={`/cartoes/baralho/${id}/cartao/add/json`}
         >
           <LuFileJson className="w-6 h-6" />
           Criar com

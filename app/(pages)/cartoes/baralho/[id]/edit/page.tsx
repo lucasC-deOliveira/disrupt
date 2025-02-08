@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
@@ -44,7 +44,7 @@ const EDIT_DECK = gql`
   }
 `;
 
-export default function EditarBaralho({ params }: { params: { id: string } }) {
+export default function EditarBaralho({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
 
   const [photo, setPhoto] = useState("");
@@ -55,7 +55,7 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
 
   const { replace } = useRouter();
 
-  const { id } = params;
+  const  id  = use(params).id;
 
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
@@ -64,7 +64,7 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
   const [editDeck] = useMutation(EDIT_DECK);
 
   const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
-    variables: { id: params.id },
+    variables: { id: id },
   });
 
   useEffect(() => {
@@ -103,12 +103,12 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
       {
         name: deck?.title ? deck.title : "baralho",
         Icon: BsValentine2,
-        link: `/cartoes/baralho/${params.id}`,
+        link: `/cartoes/baralho/${id}`,
       },
       {
         name: "Editar baralho",
         Icon: FaEdit,
-        link: `/cartoes/baralho/${params.id}/edit`,
+        link: `/cartoes/baralho/${id}/edit`,
       },
     ]);
 
@@ -138,7 +138,7 @@ export default function EditarBaralho({ params }: { params: { id: string } }) {
     editDeck({
       variables: {
         data: {
-          id: params.id,
+          id: id,
           title: title,
           photo: photo,
         },

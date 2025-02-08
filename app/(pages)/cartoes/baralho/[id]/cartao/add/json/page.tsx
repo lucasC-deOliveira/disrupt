@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { SucessModal } from "@/app/componens/SuccessModal";
 import { useRouter } from "next/navigation";
 import { gql, useMutation } from "@apollo/client";
@@ -52,12 +52,10 @@ const CREATE_CARD = gql`
   }
 `;
 
-export default function AdicionarCartaoJson({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function AdicionarCartaoJson({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
+
+  const id = use(params).id;
 
   const [sucessModalIsOpen, setSucessModalIsOpen] = useState(false);
 
@@ -93,7 +91,7 @@ export default function AdicionarCartaoJson({
                 evaluation: "Very Hard",
                 times: 0,
                 showDataTime: new Date().toISOString(),
-                deckId: params.id,
+                deckId: id,
                 type: "text",
                 photo: "",
               },
@@ -146,17 +144,17 @@ export default function AdicionarCartaoJson({
       {
         name: "baralho",
         Icon: BsValentine2,
-        link: `/cartoes/baralho/${params.id}`,
+        link: `/cartoes/baralho/${id}`,
       },
       {
         name: "Adicionar cartão",
         Icon: IoMdAddCircle,
-        link: `/cartoes/baralho/${params.id}/cartao/add`,
+        link: `/cartoes/baralho/${id}/cartao/add`,
       },
       {
         name: "Adicionar cartão por json",
         Icon: TbJson,
-        link: `/cartoes/baralho/${params.id}/cartao/add/json`,
+        link: `/cartoes/baralho/${id}/cartao/add/json`,
       },
     ]);
     changeBackButton(true);

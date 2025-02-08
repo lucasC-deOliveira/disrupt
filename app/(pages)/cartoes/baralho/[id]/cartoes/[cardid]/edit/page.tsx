@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { v4 } from "uuid";
 import { SucessModal } from "@/app/componens/SuccessModal";
@@ -70,11 +70,7 @@ function base64ToFile(base64String: string, fileName: string) {
   return new File([blob], fileName, { type: mimeType });
 }
 
-export default function EditarCartao({
-  params,
-}: {
-  params: { id: string; cardid: string };
-}) {
+export default function EditarCartao({ params }: { params: Promise<{ id: string, cardid: string }> }) {
   const { theme } = useTheme();
 
   const [photo, setPhoto] = useState<File | null>(null);
@@ -93,8 +89,12 @@ export default function EditarCartao({
 
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
+  const id = use(params).id;
+
+  const cardid = use(params).cardid;
+
   const { loading, error, data, refetch } = useQuery(GET_CARD_BY_ID, {
-    variables: { id: params.cardid },
+    variables: { id: cardid},
   });
 
   const [type, setType] = useState<"with image" | "text">("text");
@@ -121,7 +121,7 @@ export default function EditarCartao({
               photo: reader.result == card.photo ? card.photo : reader.result,
               title,
               answer,
-              id: params.cardid,
+              id: cardid,
             },
           },
         })
@@ -130,7 +130,7 @@ export default function EditarCartao({
 
             setTimeout(() => {
               handleCloseSuccessModal();
-              replace("/cartoes/baralho/" + params.id + "/cartoes");
+              replace("/cartoes/baralho/" + id + "/cartoes");
             }, 2000);
           })
           .catch((e): any => console.log(e.message));
@@ -153,7 +153,7 @@ export default function EditarCartao({
 
           setTimeout(() => {
             handleCloseSuccessModal();
-            replace(`/cartoes/baralho/${params.id}/cartoes`);
+            replace(`/cartoes/baralho/${id}/cartoes`);
           }, 2000);
         })
         .catch((e): any => console.log(e.message));
@@ -181,18 +181,18 @@ export default function EditarCartao({
       {
         name: "baralho",
         Icon: BsValentine2,
-        link: `/cartoes/baralho/${params.id}`,
+        link: `/cartoes/baralho/${id}`,
       },
       
       {
         name: "Abrir baralho",
         Icon: FaBoxOpen,
-        link: `/cartoes/baralho/${params.id}/cartoes`,
+        link: `/cartoes/baralho/${id}/cartoes`,
       },
       {
         name: "Editar cartão",
         Icon: FaEdit,
-        link: `/cartoes/baralho/${params.id}/cartoes/${params.cardid}/edit`,
+        link: `/cartoes/baralho/${id}/cartoes/${cardid}/edit`,
       },
       
     ]);
@@ -221,7 +221,7 @@ export default function EditarCartao({
         refetch();
       }
     }
-  }, [data, error?.message, params.id, refetch]);
+  }, [data, error?.message, id, refetch]);
 
   return (
     <section className="w-full pl-16 pr-16  ">
@@ -229,7 +229,7 @@ export default function EditarCartao({
         Editar Cartão
       </h3>
       <form
-        className="w-full border-2 rounded-lg"
+        className="w-full border-2 rounded-lg bg-black opacity-90"
         style={{ borderColor: theme.color, color: theme.color }}
         method="Post"
         onSubmit={handleSubmit}

@@ -36,7 +36,7 @@ const [height, setHeight] = useState(1000);
            boxShadow:
           `0 0 15px ${theme.color}, 0 0 30px ${theme.color},0 0 45px rgba(0, 255, 255, 0.2), 0 0 60px ${theme.color}`,
           transition: "box-shadow 0.3s ease",
-          animation: "pulseNeon 2s infinite ease-in-out;",
+          animation: "pulseNeon 2s infinite ease-in-out",
       }}>
         <nav className=" border-2  rounded-md h-full" style={{borderColor:theme.color}}>
           <div className="flex gap-4 items-center p-4  justify-center rounded-md">

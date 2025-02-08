@@ -25,6 +25,8 @@ export interface CardType {
 }
 
 export interface DocumentType {
+    _id: string;
+    _rev?: string;
     id: string;
     title: string;
     photo: string;
@@ -39,9 +41,7 @@ export default db;
 // Adiciona um novo documento
 export async function addDoc(doc: DocumentType): Promise<PouchDB.Core.Response | undefined> {
     try {
-        const response = await db.put({
-            ...doc,
-        });
+        const response = await db.put({ ...doc, _id: doc.id, _rev: undefined });
         return response;
     } catch (error) {
         console.error('Erro ao adicionar documento:', error);
@@ -67,6 +67,7 @@ export async function updateDoc(updatedDoc: DocumentType): Promise<PouchDB.Core.
         const response = await db.put({
             ...existingDoc,
             ...updatedDoc,
+            _rev: existingDoc._rev,
         });
         return response;
     } catch (error) {
@@ -129,7 +130,7 @@ export async function syncFromServer() {
     
                 const existing = await db.get(deck._id).catch(() => null);
                 if (existing) {
-                    await db.put({ ...existing, ...deck }); // Atualiza documento existente
+                    await db.put({ ...existing, ...deck, _rev: existing._rev }); // Atualiza documento existente
                 } else {
                     await db.put(deck); // Insere novo documento
                 }
@@ -210,7 +211,7 @@ export async function answerCard(deckId: string, cardId: string, evaluation: "Ve
         deck.cards[cardIndex].showDataTime = Dayjs().add(answerCardEvaluationTimeStrategy(deck.cards[cardIndex].times, evaluation), 's').toISOString();
 
         // Realiza o put no documento atualizado
-        const response = await db.put(deck);
+        const response = await db.put({...deck, _rev: deck._rev});
         return response;
     } catch (error) {
         console.error('Erro ao atualizar a carta:', error);
