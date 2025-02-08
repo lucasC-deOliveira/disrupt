@@ -20,6 +20,7 @@ import { answerCard, findCardByDeckIdAndMostLateShowDataTime, findCardsByDeckIdA
 import { CardFront } from "@/app/componens/CardComponentFront";
 import { CardBack } from "@/app/componens/CardComponentBack";
 import { Card } from "@/app/interfaces/Card";
+import { CardContainer } from "@/app/componens/CardContainer";
 
 const cardFrame: any = {
   blue: lolCardBlue.src,
@@ -33,12 +34,14 @@ const cardFrame: any = {
 
 export default function EstudarBaralho({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
-  const [face, setFace] = useState<"frente" | "verso">("verso");
+  const [face, setFace] = useState<"frente" | "verso">("frente");
   const [card, setCard] = useState<Card>({} as Card);
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
   let [loading, setLoading] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
   const id = use(params).id;
+  const canShowCard = !loading && card?.title
+  const noMoreCards = !loading && !card?.title
 
   const override: CSSProperties = {
     display: "block",
@@ -148,49 +151,18 @@ export default function EstudarBaralho({ params }: { params: Promise<{ id: strin
           Carregando o card!...
         </div>
       )}
-      {!loading && card?.title && (
-        <div className="col-span-12 mt-20 rounded-md flex flex-col items-center justify-center py-4 relative ">
-          {!!cardFrame[theme.cardFrame] && (
-            <>
-              <div
-                className="-top-6 mt-9 absolute z-180 bg-black "
-                style={{ width: 350, height: 650 }}
-              ></div>
-              <Image
-                src={cardFrame[theme.cardFrame]}
-                alt="a"
-                width={500}
-                height={400}
-                className=" -top-6 absolute z-2 "
-                objectFit="cover"
-                objectPosition="center"
-                style={{
-                  width: 400,
-                  height: 700,
-                  minHeight: 400,
-                  minWidth: 400,
-                  maxWidth: 400,
-                  backgroundSize: "cover",
-                }}
-              />
-            </>
-          )}
-
-          {face == "frente" && (
-            <CardFront
-              card={card}
-              handleShowAnswer={handleShowAnswer}
-            />
-          )}
-          {face == "verso" && (
-            <CardBack
-              card={card}
-              evaluateAnswer={evaluateAnswer}
-            />
-          )}
+      {canShowCard && (
+        <div className="col-span-12 mt-20 rounded-md flex flex-col items-center justify-center">
+          <CardContainer
+            handleShowAnswer={handleShowAnswer}
+            evaluateAnswer={evaluateAnswer}
+            card={card}
+            imageSrc={cardFrame[theme.cardFrame]}
+            face={face}
+          />
         </div>
       )}
-      {!loading && !card?.title && (
+      {noMoreCards && (
         <div className="col-span-12 flex items-center justify-center">
           <p className="my-96" style={{ color: theme.color }}>
             Não há mais cards para estudar!

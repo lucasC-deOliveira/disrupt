@@ -41,9 +41,9 @@ export default function RootLayout({
           <main className="col-span-12 md:col-span-8 lg:col-span-10 ">
             {children}
           </main>
-          {/* <div className="absolute top-44 right-12">
+          <div className="absolute top-44 right-12">
             <ConfigButton />
-          </div> */}
+          </div>
         </Providers>
       </body>
     </html>

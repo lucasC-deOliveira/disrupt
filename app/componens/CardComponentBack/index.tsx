@@ -16,7 +16,7 @@ export function CardBack(
 
     return (
         <div
-            className={`${!theme.cardFrame ? "border-2 bg-black" : ""}  rounded-md w-3/4 lg:w-3/6 xl:w-2/6 flex flex-col items-center  p-4 relative`}
+            className="rounded-md w-3/4 lg:w-3/6 xl:w-2/6 flex flex-col items-center  p-4 relative"
             style={{
                 borderColor: theme.color,
                 width: 340,
