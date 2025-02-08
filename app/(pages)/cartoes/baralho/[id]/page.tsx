@@ -76,7 +76,7 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
 
   const id = use(params).id;
 
-  const [removeDeck, removeDeckMutationController] = useMutation(REMOVE_DECK, {
+  const [removeDeck] = useMutation(REMOVE_DECK, {
     variables: { id: id },
   });
 
@@ -96,21 +96,8 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
     setSuccessModalIsOpen(false);
   };
 
-  // useEffect(() => {
-  //   if (data) {
-  //     if (data?.getDeckById) {
-  //       const newDeck = data.getDeckById;
-  //       // console.log(newDeck.cards)
-  //       setDeck(newDeck);
-  //     }
-  //     if (error?.message === "Failed to fetch") {
-  //       refetch();
-  //     }
-  //   }
-  // }, [data, error?.message, refetch]);
 
   useEffect(() => {
-    syncFromServer()
     getDocById(id)
       .then((decksResponse) => {
         if (decksResponse) {
@@ -210,38 +197,39 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
       <div
         className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 mt-8 "
       >
-        <div className="w-full flex justify-end gap-2">
-          <Link
-            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
-            style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${id}/cartao/add`}
-          >
-            <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
-            Adicionar Cartões
-          </Link>
-          <Link
-            className="  p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
-            style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${id}/cartoes`}
-          >
-            {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
-            Abrir Deck
-          </Link>
-        </div>
         <div
           className=" border-2 rounded-md  pr-1  w-full bg-black"
-          style={{ borderColor: theme.color, height: 578 + "px" }}
+          style={{ borderColor: theme.color, height: 728 + "px" }}
         >
           <div
             className=" border-2 rounded-md h-full  pr-1"
             style={{ borderColor: theme.color }}
           >
             <div
-              className=" border-2 rounded-md h-full  p-8"
+              className=" border-2 rounded-md h-full  p-4"
               style={{ borderColor: theme.color }}
             >
-              {" "}
-              <div className="flex w-full justify-end mb-4">
+              <div className="w-full flex justify-end gap-2">
+                <Link
+                  className=" w-22 p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
+                  style={{ borderColor: theme.color, color: theme.color }}
+                  href={`/cartoes/baralho/${id}/edit`}
+                >
+                  <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
+                  Editar
+                </Link>
+                <button
+                  className=" w-22 p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
+                  style={{ borderColor: theme.color, color: theme.color }}
+                  type="button"
+                  onClick={() => setDeleteModalIsOpen(true)}
+                >
+                  <FaRegTrashAlt className="w-6 h-6" style={{ fill: theme.color }} />
+                  Apagar
+                </button>
+              </div>
+
+              <div className="flex w-full justify-end my-4">
                 <h6
                   className="text-lg font-bold"
                   style={{ color: theme.color }}
@@ -249,24 +237,27 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
                   CARTÕES {deck.cards?.length || 0}
                 </h6>
               </div>
-              <div
-                className="flex w-full items-center justify-center  rounded-md border-2  mb-8"
-                style={{ borderColor: theme.color, height: 250 + "px" }}
-              >
-                <Image
-                  src={deck.photo}
-                  alt="foto do baralho"
-                  width={400}
-                  height={200}
-                  className="w-full h-full rounded-md"
-                />
+              <div className="flex w-full items-center justify-center">
+                <div
+                  className="flex items-center justify-center  rounded-md border-2 mb-8"
+                  style={{ borderColor: theme.color, height: 300 + "px", width: 400 + "px" }}
+                >
+                  <Image
+                    src={deck.photo}
+                    alt="foto do baralho"
+                    width={400}
+                    height={200}
+                    className="w-full h-full rounded-md"
+                  />
+                </div>
               </div>
               <h2
-                className="text-center text-4xl font-bold mt-12 mb-14"
+                className="text-center text-4xl font-bold mt-4 mb-4"
                 style={{ color: theme.color }}
               >
                 {deck.title}
               </h2>
+
               <div className="flex w-full justify-between mb-12">
                 <div className="flex flex-col items-center justify-center">
                   <h6
@@ -325,37 +316,43 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
                     }
                   </h6>
                 </div>
+
               </div>
+
+              <div className="w-full flex justify-between gap-1">
+
+                <Link
+                  className="  p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
+                  style={{ borderColor: theme.color, color: theme.color }}
+                  href={`/cartoes/baralho/${id}/cartoes`}
+                >
+                  {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
+                  Abrir Deck
+                </Link>
+                <Link
+                  className="  p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
+                  style={{ borderColor: theme.color, color: theme.color }}
+                  href={`/cartoes/baralho/${id}/cartao/add`}
+                >
+                  <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
+                  Adicionar Cartões
+                </Link>
+
+                <Link
+                  className="  p-2 border-2 rounded-md text-lg flex gap-2 items-center justify-center bg-black"
+                  style={{ borderColor: theme.color, color: theme.color }}
+                  href={`/cartoes/baralho/${id}/estudar`}
+                >
+                  <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
+                  Estudar
+                </Link>
+
+              </div>
+
             </div>
           </div>
         </div>
-        <div className="w-full flex justify-between ">
-          <Link
-            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
-            style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${id}/edit`}
-          >
-            <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
-            Editar
-          </Link>
-          <button
-            className=" w-44 p-2 border-2 rounded-md text-2xl flex items-center gap-2 justify-center bg-black"
-            style={{ borderColor: theme.color, color: theme.color }}
-            type="button"
-            onClick={() => setDeleteModalIsOpen(true)}
-          >
-            <FaRegTrashAlt className="w-6 h-6" style={{ fill: theme.color }} />
-            Apagar
-          </button>
-          <Link
-            className="  p-2 border-2 rounded-md text-2xl flex gap-2 items-center justify-center bg-black"
-            style={{ borderColor: theme.color, color: theme.color }}
-            href={`/cartoes/baralho/${id}/estudar`}
-          >
-            <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
-            Estudar
-          </Link>
-        </div>
+
       </div>
     </section>
   );
