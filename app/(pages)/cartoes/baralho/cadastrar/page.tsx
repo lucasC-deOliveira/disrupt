@@ -11,13 +11,13 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import { AiFillCreditCard } from "react-icons/ai";
 import { MdLibraryBooks } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
+import { addDoc } from "@/app/lib/pouchDb";
 
 const CREATE_DECK = gql`
   mutation CreateDeck($data: CreateDeckInput!) {
     createDeck(data: $data) {
       id
       title
-      photo
     }
   }
 `;
@@ -53,6 +53,13 @@ export default function CadastrarBaralho() {
     reader.onload = () => {
       createDeck({ variables: { data: { photo: reader.result, title } } })
         .then((result) => {
+          addDoc({
+            id: result.data.createDeck.id,
+            title: title,
+            cards: [],
+            _id: result.data.createDeck.id,
+            photo: String(reader.result)
+          })
           setSucessModalIsOpen(true);
 
           setTimeout(() => {
@@ -85,7 +92,7 @@ export default function CadastrarBaralho() {
         Icon: MdLibraryBooks,
         link: "/cartoes",
       },
-      { name: "Adicionar baralho", Icon: IoMdAddCircle, link:"/cartoes/baralho/cadastrar" },
+      { name: "Adicionar baralho", Icon: IoMdAddCircle, link: "/cartoes/baralho/cadastrar" },
     ]);
 
     changeBackButton(true);

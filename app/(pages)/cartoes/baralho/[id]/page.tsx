@@ -16,7 +16,7 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
-import { getAllDocs, getDocById, syncFromServer } from "@/app/lib/pouchDb";
+import {  getDocById, syncFromServer, deleteDocById } from "@/app/lib/pouchDb";
 import { FadeLoader } from "react-spinners";
 
 interface Card {
@@ -141,6 +141,7 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
 
   const handleDelete = () => {
     removeDeck().then(() => {
+      deleteDocById(id)
       handleCloseDeleteModal();
 
       setSuccessModalIsOpen(true);

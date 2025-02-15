@@ -31,7 +31,6 @@ const GET_DECK_BY_ID = gql`
   query GetDeckById($id: String!) {
     getDeckById(id: $id) {
       title
-      photo
     }
   }
 `;

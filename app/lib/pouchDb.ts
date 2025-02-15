@@ -48,6 +48,19 @@ export async function addDoc(doc: DocumentType): Promise<PouchDB.Core.Response |
         console.error('Erro ao adicionar documento:', error);
     }
 }
+// ...
+
+export async function deleteDocById(id: string): Promise<PouchDB.Core.Response | undefined> {
+    try {
+        const doc = await db.get(id);
+        const response = await db.remove(doc);
+        return response;
+    } catch (error) {
+        console.error(`Erro ao deletar documento com id ${id}:`, error);
+        return undefined;
+    }
+}
+
 
 // Obtém todos os documentos
 export async function getAllDocs(): Promise<DocumentType[]> {
@@ -100,7 +113,6 @@ export async function syncFromServer() {
         console.log('Já está sincronizando com o servidor. Aguarde...');
         return;
     }
-
     isSyncingFromServer = true;
     try {
         const query = `
@@ -108,12 +120,10 @@ export async function syncFromServer() {
             getAllDecks {
               id
               title
-              photo
               cards {
                 id
                 title
                 answer
-                photo
                 showDataTime
                 evaluation
                 times
@@ -311,8 +321,6 @@ export async function getDeckById(deckId: string): Promise<DocumentType | undefi
         return undefined;
     }
 }
-
-
 
 export async function syncDeckToServer(deckId: string) {
     try {
