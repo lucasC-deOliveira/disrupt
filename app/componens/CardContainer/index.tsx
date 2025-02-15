@@ -1,8 +1,11 @@
 import Image from "next/image";
-import { CardFront } from "../CardComponentFront";
+import { CardTextFront } from "../CardTextComponentFront";
 import { Card } from "@/app/interfaces/Card";
-import { CardBack } from "../CardComponentBack";
+import { CardTextBack } from "../CardTextComponentBack";
 import { useTheme } from "@/app/hooks/useTheme";
+import CardComponentVideo from "../CardComponentVideo";
+import { CardImageFront } from "../CardImageComponentFront";
+import { CardImageBack } from "../CardImageComponentBack";
 
 interface CardContainerProps {
     imageSrc?: string;
@@ -10,10 +13,11 @@ interface CardContainerProps {
     handleShowAnswer: () => void;
     face: "frente" | "verso";
     evaluateAnswer: (evaluation: "Very Hard" | "Hard" | "Normal" | "Easy") => void;
+    type: "video" | "image" | "text";
 
 }
 
-export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluateAnswer }: CardContainerProps) => {
+export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluateAnswer, type }: CardContainerProps) => {
     const { theme } = useTheme();
     return (
         <div className=" flex justify-center items-start relative" style={{
@@ -27,16 +31,43 @@ export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluate
                 className={`${!imageSrc ? "border-2 bg-black opacity-95  " : ""} z-0 `}
                 style={{ width: 350, height: 650, borderColor: theme.color }}
             >
-                {face === "frente" && (<CardFront
-                    card={card}
-                    handleShowAnswer={handleShowAnswer}
-                />)}
-                {face == "verso" && (
-                    <CardBack
-                        card={card}
-                        evaluateAnswer={evaluateAnswer}
-                    />
+                {type === "video" && (
+                    <CardComponentVideo card={card} evaluateAnswer={evaluateAnswer} />
                 )}
+                {type === "image" && (
+                    <>
+                        {face === "frente" && (
+                            <CardImageFront
+                                card={card}
+                                handleShowAnswer={handleShowAnswer}
+                            />
+                        )}
+                        {face === "verso" && (
+                            <CardImageBack
+                                card={card}
+                                evaluateAnswer={evaluateAnswer}
+                            />
+                        )}
+                    </>
+                )}
+
+                {type === "text" && (
+                    <>
+                        {face === "frente" && (
+                            <CardTextFront
+                                card={card}
+                                handleShowAnswer={handleShowAnswer}
+                            />
+                        )}
+                        {face === "verso" && (
+                            <CardTextBack
+                                card={card}
+                                evaluateAnswer={evaluateAnswer}
+                            />
+                        )}
+                    </>
+                )}
+
             </div>
 
             {imageSrc && (
@@ -71,4 +102,4 @@ export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluate
 
         </div>
     )
-} 
+}

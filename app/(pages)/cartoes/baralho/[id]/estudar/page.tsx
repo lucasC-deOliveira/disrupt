@@ -1,26 +1,34 @@
 "use client";
 
-import { useTheme } from "@/app/hooks/useTheme";
-import Image from "next/image";
-import { CSSProperties, use, useEffect, useState } from "react";
-import { FadeLoader } from "react-spinners";
-import { BiSolidHomeHeart } from "react-icons/bi";
-import { AiFillCreditCard } from "react-icons/ai";
-import { useMyHeader } from "@/app/hooks/navigation";
-import { BsValentine2 } from "react-icons/bs";
-import { MdLibraryBooks } from "react-icons/md";
-import { PiStudentBold } from "react-icons/pi";
 import lolCardPurple from "../../../../../../public/images/lolCardFramePurple.png";
 import lolCardBlue from "../../../../../../public/images/lolCardFrameBlue.png";
 import lolCardRed from "../../../../../../public/images/lolCardFrameRed.png";
 import lolCardDarkBlue from "../../../../../../public/images/lolCardFrameDarkBlue.png";
 import lolCardGold from "../../../../../../public/images/lolCardFrameGold.png";
 import lolCardSilver from "../../../../../../public/images/lolCardFrameSilver.png";
-import { answerCard, findCardByDeckIdAndMostLateShowDataTime, findCardsByDeckIdAndMostLateShowDataTimeAndQtd, getDeckById, syncDeckToServer, syncFromServer } from "@/app/lib/pouchDb";
-import { CardFront } from "@/app/componens/CardComponentFront";
-import { CardBack } from "@/app/componens/CardComponentBack";
-import { Card } from "@/app/interfaces/Card";
+
+import { CSSProperties, use, useEffect, useState } from "react";
 import { CardContainer } from "@/app/componens/CardContainer";
+import { useMyHeader } from "@/app/hooks/navigation";
+import { BiSolidHomeHeart } from "react-icons/bi";
+import { AiFillCreditCard } from "react-icons/ai";
+import { useTheme } from "@/app/hooks/useTheme";
+import { getVideo } from "@/app/utils/GetVideo";
+import { getImage } from "@/app/utils/GetImage";
+import { MdLibraryBooks } from "react-icons/md";
+import { PiStudentBold } from "react-icons/pi";
+import { BsValentine2 } from "react-icons/bs";
+import { Card } from "@/app/interfaces/Card";
+import { FadeLoader } from "react-spinners";
+
+import {
+  answerCard,
+  findCardsByDeckIdAndMostLateShowDataTimeAndQtd,
+  getDeckById,
+  syncDeckFromServerByDeckId,
+  syncDeckToServer
+} from "@/app/lib/pouchDb";
+
 
 const cardFrame: any = {
   blue: lolCardBlue.src,
@@ -32,6 +40,7 @@ const cardFrame: any = {
   "": "",
 };
 
+
 export default function EstudarBaralho({ params }: { params: Promise<{ id: string }> }) {
   const { theme } = useTheme();
   const [face, setFace] = useState<"frente" | "verso">("frente");
@@ -42,7 +51,7 @@ export default function EstudarBaralho({ params }: { params: Promise<{ id: strin
   const id = use(params).id;
   const canShowCard = !loading && card?.title
   const noMoreCards = !loading && !card?.title
-
+  const isCardEmpty = cards.length <= 0
   const override: CSSProperties = {
     display: "block",
     margin: "0 auto",
@@ -52,83 +61,99 @@ export default function EstudarBaralho({ params }: { params: Promise<{ id: strin
   const handleShowAnswer = () => {
     setFace("verso");
   };
+
+  const handleReset = () => {
+    setFace("frente");
+    setCard({} as Card);
+  };
+
+  const setHeader = async () => {
+    const deck = await getDeckById(id)
+    let deckTitle = "";
+    if (deck) {
+      deckTitle = deck.title;
+    }
+    changeTitle("Cartões");
+    changeBackButton(true);
+    changePaths([
+      {
+        name: "Home",
+        Icon: BiSolidHomeHeart,
+        link: "/cartoes",
+      },
+      {
+        name: "Cartões",
+        Icon: AiFillCreditCard,
+        link: "/cartoes",
+      },
+      {
+        name: "Baralhos",
+        Icon: MdLibraryBooks,
+        link: "/cartoes",
+      },
+      {
+        name: deckTitle || "Baralho",
+        Icon: BsValentine2,
+        link: `/cartoes/baralho/${id}/`,
+      },
+      {
+        name: "Estudar",
+        Icon: PiStudentBold,
+        link: `/cartoes/baralho/${id}/estudar`,
+      },
+    ]);
+
+  }
+
+  const initialize = async () => {
+    setLoading(true);
+    await syncDeckFromServerByDeckId(id)
+    await setHeader()
+    await getCards()
+    setLoading(false);
+  }
+  const handleCardMidia = async (card: Card) => {
+    if (card?.type === "video") {
+      await getVideo(card)
+    }
+    else if (card?.type === "image") {
+      await getImage(card)
+    }
+  }
+
+  const handleCardsChange = (cards: Card[]) => {
+    setCard(cards[0]);
+    setCards(cards.slice(1, cards.length));
+  }
+
+  const getCards = async () => {
+    const cards = await findCardsByDeckIdAndMostLateShowDataTimeAndQtd(id, 50)
+    await handleCardMidia(cards[0])
+    handleCardsChange(cards)
+  }
+
   const evaluateAnswer = (
     evaluation: "Very Hard" | "Hard" | "Normal" | "Easy"
   ) => {
-    return answerCard(id, card.id, evaluation).then(() => {
+    return answerCard(id, card.id, evaluation).then(async () => {
       syncDeckToServer(id)
       setLoading(true);
-      setFace("frente");
-      setCard({} as Card);
+      handleReset();
 
-      if (cards.length > 0) {
-        setCard(cards[0]);
-        setCards(cards.slice(1, cards.length));
+      if (!isCardEmpty) {
+        await handleCardMidia(cards[0])
+        handleCardsChange(cards);
         setLoading(false);
-      }
-      else {
-        findCardsByDeckIdAndMostLateShowDataTimeAndQtd(id, 50).then((cards) => {
-          if (cards.length > 0) {
-            setCard(cards[0]);
-          }
-          setCards(cards.slice(1, cards.length));
-          setLoading(false);
-        })
+        return;
       }
 
-
+      await getCards()
+      setLoading(false);
     });
   };
 
   useEffect(() => {
-    syncFromServer()
-    findCardsByDeckIdAndMostLateShowDataTimeAndQtd(id, 50).then((cards) => {
-      if (cards.length > 0) {
-        setCard(cards[0]);
-      }
-      setCards(cards.slice(1, cards.length));
-      setLoading(false);
-    })
-
-    getDeckById(id).then((deck) => {
-      let deckTitle = "";
-
-      if (deck) {
-        deckTitle = deck.title;
-      }
-      changePaths([
-        {
-          name: "Home",
-          Icon: BiSolidHomeHeart,
-          link: "/cartoes",
-        },
-        {
-          name: "Cartões",
-          Icon: AiFillCreditCard,
-          link: "/cartoes",
-        },
-        {
-          name: "Baralhos",
-          Icon: MdLibraryBooks,
-          link: "/cartoes",
-        },
-        {
-          name: deckTitle || "Baralho",
-          Icon: BsValentine2,
-          link: `/cartoes/baralho/${id}/`,
-        },
-        {
-          name: "Estudar",
-          Icon: PiStudentBold,
-          link: `/cartoes/baralho/${id}/estudar`,
-        },
-      ]);
-    });
-    changeTitle("Cartões");
-
-    changeBackButton(true);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initialize();
   }, []);
 
   return (
@@ -159,6 +184,7 @@ export default function EstudarBaralho({ params }: { params: Promise<{ id: strin
             card={card}
             imageSrc={cardFrame[theme.cardFrame]}
             face={face}
+            type={card.type}
           />
         </div>
       )}

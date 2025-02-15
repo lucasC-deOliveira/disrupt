@@ -36,20 +36,7 @@ interface Deck {
   title: string;
   cards: Card[];
 }
-const GET_DECK_BY_ID = gql`
-  query GetDeckById($id: String!) {
-    getDeckById(id: $id) {
-      id
-      title
-      photo
-      cards {
-        times
-        evaluation
-        showDataTime
-      }
-    }
-  }
-`;
+
 
 const REMOVE_DECK = gql`
   mutation RemoveDeck($id: String!) {
@@ -98,16 +85,17 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
 
 
   useEffect(() => {
+    syncFromServer();
     getDocById(id)
       .then((decksResponse) => {
         if (decksResponse) {
           const newDeck: Deck = {
             title: decksResponse.title,
-            photo: decksResponse.photo,
+            photo: decksResponse.photo || '',
             id: decksResponse.id,
             cards: decksResponse.cards.map(card => ({
               answer: card.answer,
-              photo: card.photo,
+              photo: card?.photo || '',
               title: card.title,
               showDataTime: card.showDataTime,
               evaluation: card.evaluation,
@@ -119,8 +107,7 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
           };
           setDeck(newDeck);
         }
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      })    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

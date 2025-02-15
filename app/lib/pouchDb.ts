@@ -13,15 +13,16 @@ const client = new ApolloClient({
 });
 
 export interface CardType {
+    video?: string;
     answer: string;
-    photo: string;
+    photo?: string;
     title: string;
     showDataTime: string;
     evaluation: string;
     times: number;
     id: string;
     deckId: string;
-    type: string;
+    type: 'text' | 'video' | 'image';
 }
 
 export interface DocumentType {
@@ -29,7 +30,7 @@ export interface DocumentType {
     _rev?: string;
     id: string;
     title: string;
-    photo: string;
+    photo?: string;
     cards: CardType[];
 }
 
@@ -81,7 +82,7 @@ export async function syncToServer() {
     const formattedDocs = docs.rows.map(row => row.doc);
 
     try {
-       
+
         const result = await fetch(process.env.NEXT_PUBLIC_APIBACKEND_REST || '', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -92,7 +93,15 @@ export async function syncToServer() {
         console.error('Erro ao sincronizar documentos:', error);
     }
 }
+
+let isSyncingFromServer = false;
 export async function syncFromServer() {
+    if (isSyncingFromServer) {
+        console.log('Já está sincronizando com o servidor. Aguarde...');
+        return;
+    }
+
+    isSyncingFromServer = true;
     try {
         const query = `
           query {
@@ -113,21 +122,21 @@ export async function syncFromServer() {
             }
           }
         `;
-    
+
         const response = await fetch(process.env.NEXT_PUBLIC_APIBACKEND || ``, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query }),
         });
-    
+
         const { data } = await response.json();
-    
+
         for (const deck of data.getAllDecks) {
             try {
                 if (!deck._id) {
                     deck._id = deck.id || uuidv4();
                 }
-    
+
                 const existing = await db.get(deck._id).catch(() => null);
                 if (existing) {
                     await db.put({ ...existing, ...deck, _rev: existing._rev }); // Atualiza documento existente
@@ -139,7 +148,82 @@ export async function syncFromServer() {
             }
         }
     } catch (error) {
-        console.error('Erro na requisição syncFromServer:', error);
+        console.error('Erro na sincronizacao do servidor', error);
+    }
+    finally {
+        console.log(isSyncingFromServer);
+        isSyncingFromServer = false;
+        console.log('Sincronização concluída.');
+    }
+}
+
+export async function syncDeckFromServerByDeckId(deckId: string) {
+    if (isSyncingFromServer) {
+        console.log('Já está sincronizando com o servidor. Aguarde...');
+        return;
+    }
+
+    isSyncingFromServer = true;
+
+    try {
+        const GET_DECK_BY_ID = gql`
+          query GetDeckById($id: String!) {
+            getDeckById(id: $id) {
+              id
+              title
+              photo
+              cards {
+                id
+                title
+                answer
+                photo
+                showDataTime
+                evaluation
+                times
+                type
+                }
+              }
+          }
+        `;
+
+        const { data, error } = await client.query({
+            query: GET_DECK_BY_ID,
+            variables: { id: deckId },
+        });
+
+        if (error) {
+            console.error('Erro na query:', error);
+        }
+
+        const deckFromServer: DocumentType = { 
+            _id: deckId,
+            id: data.getDeckById.id,
+            title: data.getDeckById.title,
+            photo: data.getDeckById.photo,
+            cards: data.getDeckById.cards
+        }
+
+        if (!deckFromServer) {
+            console.log(`Deck com id ${deckId} não encontrado no servidor.`);
+            return;
+        }
+        try {
+            const existing = await db.get(deckFromServer._id).catch(() => null);
+
+            if (existing) {
+                await db.put({ ...existing, ...deckFromServer, _rev: existing._rev }); // Atualiza documento existente
+            } else {
+                await db.put(deckFromServer); 
+            }
+        } catch (error) {
+            console.error('Erro ao sincronizar deck:', error);
+        }
+    } catch (error) {
+        console.error('Erro na sincronizacao do servidor', error);
+    } finally {
+        console.log(isSyncingFromServer);
+        isSyncingFromServer = false;
+        console.log('Sincronização concluída.');
     }
 }
 export async function getDocById(id: string): Promise<DocumentType | undefined> {
@@ -211,7 +295,7 @@ export async function answerCard(deckId: string, cardId: string, evaluation: "Ve
         deck.cards[cardIndex].showDataTime = Dayjs().add(answerCardEvaluationTimeStrategy(deck.cards[cardIndex].times, evaluation), 's').toISOString();
 
         // Realiza o put no documento atualizado
-        const response = await db.put({...deck, _rev: deck._rev});
+        const response = await db.put({ ...deck, _rev: deck._rev });
         return response;
     } catch (error) {
         console.error('Erro ao atualizar a carta:', error);
@@ -234,14 +318,14 @@ export async function syncDeckToServer(deckId: string) {
     try {
         // Busca o deck específico no banco local
         const deck = await db.get(deckId);
-    
+
         // Envia o deck para o servidor, encapsulado em um array no mesmo formato que o syncToServer espera
         const result = await fetch(process.env.NEXT_PUBLIC_APIBACKEND_REST || ``, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ decks: [deck] }),
         });
-    
+
         console.log('Deck sincronizado com sucesso!', result);
     } catch (error) {
         console.error(`Erro ao sincronizar deck com id ${deckId}:`, error);

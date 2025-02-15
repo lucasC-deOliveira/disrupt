@@ -11,7 +11,7 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import dayjs from "dayjs";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsFiletypeJson } from "react-icons/bs";
-import db, { addDoc, getAllDocs, updateDoc, DocumentType, CardType, syncToServer, syncFromServer } from '../../lib/pouchDb';
+import  { getAllDocs, syncFromServer } from '../../lib/pouchDb';
 
 
 interface Card {
@@ -19,7 +19,7 @@ interface Card {
   showDataTime: Date;
   times: number;
   title: string;
-  photo: string;
+  photo?: string;
   answer: string;
   id: string;
 }
@@ -74,24 +74,11 @@ const exportDecksInJson = (decks: Deck[]) => {
 export default function Cartoes() {
   const { theme } = useTheme();
 
-  // const { loading, error, data, refetch } = useQuery(GET_DECKS);
 
   const [decks, setDecks] = useState<Deck[]>([]);
 
 
   const { changeTitle, changePaths, changeBackButton } = useMyHeader();
-
-  // useEffect(() => {
-  //   if (data) {
-  //     if (data?.getAllDecks) {
-  //       const newDecks = data.getAllDecks;
-  //       setDecks(newDecks);
-  //     }
-  //     if (error?.message === "Failed to fetch") {
-  //       refetch();
-  //     }
-  //   }
-  // }, [data, error, refetch]);
 
   useEffect(() => {
     syncFromServer()
@@ -100,11 +87,10 @@ export default function Cartoes() {
         const newDecks = decksResponse
           .map(deck => ({
             title: deck.title,
-            photo: deck.photo,
+            photo: deck.photo || '',
             id: deck.id,
             cards: deck.cards.map(card => ({
               answer: card.answer,
-              photo: card.photo,
               title: card.title,
               showDataTime: new Date(card.showDataTime),
               evaluation: card.evaluation,
@@ -112,10 +98,8 @@ export default function Cartoes() {
               id: card.id,
             }))
           }))
-          setDecks(newDecks);
+        setDecks(newDecks);
       })
-    
-    setTimeout(syncToServer,3000)
   }, []);
 
   useEffect(() => {
