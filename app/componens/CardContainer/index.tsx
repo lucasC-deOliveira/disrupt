@@ -20,16 +20,24 @@ interface CardContainerProps {
 export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluateAnswer, type }: CardContainerProps) => {
     const { theme } = useTheme();
     return (
-        <div className=" flex justify-center items-start relative" style={{
+        <div className=" flex justify-center items-start relative mb-16 " style={{
             width: 370,
             height: 660,
             minHeight: 660,
             minWidth: 370,
             maxWidth: 370,
-        }}>
+        }}
+        >
             <div
                 className={`${!imageSrc ? "border-2 bg-black opacity-95  " : ""} z-0 `}
-                style={{ width: 350, height: 650, borderColor: theme.color }}
+                style={{
+                    width: 350,
+                    height: 650,
+                    borderColor: theme.color,
+                    boxShadow: imageSrc ? "none" : `0 0 80px ${theme.color}, 0 0 80px ${theme.color},0 0 80px rgba(0, 255, 255, 0.2), 0 0 80px ${theme.color}`,
+                    transition: imageSrc ? "none" : "box-shadow 0.3s ease ",
+                    animation: imageSrc ? "none" : "pulseNeon 2s infinite ease-in-out",
+                }}
             >
                 {type === "video" && (
                     <CardComponentVideo card={card} evaluateAnswer={evaluateAnswer} />
@@ -94,6 +102,9 @@ export const CardContainer = ({ imageSrc, card, handleShowAnswer, face, evaluate
                         minHeight: 645,
                         minWidth: 360,
                         maxWidth: 360,
+                        boxShadow: `0 0 80px ${theme.color}, 0 0 80px ${theme.color},0 0 80px rgba(0, 255, 255, 0.2), 0 0 80px ${theme.color}`,
+                        transition: "box-shadow 0.3s ease ",
+                        animation: "pulseNeon 2s infinite ease-in-out",
                     }}
                         className="absolute  -z-20 bg-black"></div>
                 </>
