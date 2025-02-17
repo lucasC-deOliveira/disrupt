@@ -5,6 +5,7 @@ import PouchDB from 'pouchdb-browser';
 import { v4 as uuidv4 } from 'uuid';
 import { answerCardEvaluationTimeStrategy } from '../utils/AnswerCardEvaluationTimeStrategy';
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import { getMidia } from '../utils/getMidia';
 
 
 const client = new ApolloClient({
@@ -141,11 +142,15 @@ export async function syncFromServer() {
 
         const { data } = await response.json();
 
-        for (const deck of data.getAllDecks) {
+        const decks = data.getAllDecks;
+
+        for (const deck of decks) {
             try {
                 if (!deck._id) {
                     deck._id = deck.id || uuidv4();
                 }
+
+                deck.photo = await getMidia(`${deck.id}/deck%2Fimage`);
 
                 const existing = await db.get(deck._id).catch(() => null);
                 if (existing) {
@@ -181,7 +186,6 @@ export async function syncDeckFromServerByDeckId(deckId: string) {
             getDeckById(id: $id) {
               id
               title
-              photo
               cards {
                 id
                 title
@@ -209,7 +213,7 @@ export async function syncDeckFromServerByDeckId(deckId: string) {
             _id: deckId,
             id: data.getDeckById.id,
             title: data.getDeckById.title,
-            photo: data.getDeckById.photo,
+            photo: await getMidia(`${deckId}/deck%2Fimage`) || '',
             cards: data.getDeckById.cards
         }
 

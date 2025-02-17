@@ -35,3 +35,33 @@ body {
   scrollbar-width:0;
    -ms-overflow-style: none;
   }
+
+
+
+.titleBar {
+  app-region: drag;
+  
+}
+
+.titleBar button {
+  app-region: no-drag;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+::-webkit-scrollbar:hover {
+  opacity: 1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #131313;
+}

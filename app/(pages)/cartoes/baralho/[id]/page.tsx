@@ -16,7 +16,7 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import { useMyHeader } from "@/app/hooks/navigation";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
-import {  getDocById, syncFromServer, deleteDocById } from "@/app/lib/pouchDb";
+import { getDocById, syncFromServer, deleteDocById, syncDeckFromServerByDeckId } from "@/app/lib/pouchDb";
 import { FadeLoader } from "react-spinners";
 
 interface Card {
@@ -85,29 +85,31 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
 
 
   useEffect(() => {
-    syncFromServer();
-    getDocById(id)
-      .then((decksResponse) => {
-        if (decksResponse) {
-          const newDeck: Deck = {
-            title: decksResponse.title,
-            photo: decksResponse.photo || '',
-            id: decksResponse.id,
-            cards: decksResponse.cards.map(card => ({
-              answer: card.answer,
-              photo: card?.photo || '',
-              title: card.title,
-              showDataTime: card.showDataTime,
-              evaluation: card.evaluation,
-              times: card.times,
-              id: card.id,
-              deckId: decksResponse.id,
-              type: 'default'
-            }))
-          };
-          setDeck(newDeck);
-        }
-      })    // eslint-disable-next-line react-hooks/exhaustive-deps
+    syncDeckFromServerByDeckId(id).then(() => {
+      getDocById(id)
+        .then((decksResponse) => {
+          if (decksResponse) {
+            const newDeck: Deck = {
+              title: decksResponse.title,
+              photo: decksResponse.photo || '',
+              id: decksResponse.id,
+              cards: decksResponse.cards.map(card => ({
+                answer: card.answer,
+                photo: card?.photo || '',
+                title: card.title,
+                showDataTime: card.showDataTime,
+                evaluation: card.evaluation,
+                times: card.times,
+                id: card.id,
+                deckId: decksResponse.id,
+                type: 'default'
+              }))
+            };
+            setDeck(newDeck);
+          }
+        })
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

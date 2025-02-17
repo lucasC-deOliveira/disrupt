@@ -6,7 +6,25 @@
     "dev": "next dev --turbopack ",
     "build": "next build",
     "start": "next start",
+    "buildElectron": "electron-builder",
+    "startElectron": "electron main.js",
+    "startAll": "next start & electron main.js",
+    "buildAll": "next build && electron-builder",
+    "devAll": "next dev --turbopack & electron main.js --no-sandbox",
     "lint": "next lint"
+  },
+  "main": "main.js",
+  "build": {
+    "appId": "com.meuapp.electron",
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   },
   "dependencies": {
     "@apollo/client": "^3.10.4",
@@ -48,6 +66,9 @@
     "@types/react-textfit": "^1.1.4",
     "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.4.19",
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-reload": "^2.0.0-alpha.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
