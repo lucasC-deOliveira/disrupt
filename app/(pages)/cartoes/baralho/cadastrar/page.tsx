@@ -111,7 +111,7 @@ export default function CadastrarBaralho() {
       >
         <form className="w-full " method="Post" onSubmit={handleSubmit}>
           <div
-            className="w-96 m-auto border-2 rounded-2xl px-8 pt-24  "
+            className="w-96 bg-black m-auto border-2 rounded-2xl px-8 pt-24  "
             style={{
               borderColor: theme.color,
               color: theme.color,
@@ -163,7 +163,7 @@ export default function CadastrarBaralho() {
           </div>
           <div className="w-full flex justify-center items-center mt-4">
             <button
-              className="border-2 rounded-md p-4 w-32"
+              className="border-2 rounded-md p-4 w-32 bg-black"
               style={{ borderColor: theme.color, color: theme.color }}
               type="submit"
             >

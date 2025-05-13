@@ -96,6 +96,7 @@ export default function Cartoes() {
               evaluation: card.evaluation,
               times: card.times,
               id: card.id,
+              type: card.type
             }))
           }))
         setDecks(newDecks);
@@ -149,8 +150,16 @@ export default function Cartoes() {
             onClick={() => exportDecksInJson(decks)}
           >
             <BsFiletypeJson />
-            Exportar Cards
+            Exportar Cartoes
           </button>
+             <Link
+            className=" w-44 p-2 border-2 rounded-md flex gap-4  items-center justify-center self-end bg-black"
+            style={{ borderColor: theme.color, color: theme.color }}
+            href="/cartoes/baralho/cadastrar/importar"
+          >
+            <AiOutlinePlus />
+            Importar Cartoes
+          </Link>
         </div>
       </div>
       <div className="w-full  rounded-md grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">

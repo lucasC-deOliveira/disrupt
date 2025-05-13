@@ -11,6 +11,10 @@ interface AddVideoCardContainerProps {
   deckId: string;
   sucessCallback: () => void;
   errorCallback: () => void;
+  cutted?:boolean;
+  video: File | null;
+  handleVideoChange: (file: File | null) => void;
+
 }
 
 const CREATE_CARD = gql`
@@ -21,14 +25,17 @@ const CREATE_CARD = gql`
   }
 `;
 
-export function AddVideoCardContainer({
+export function   AddVideoCardContainer({
   deckId,
-  sucessCallback
+  sucessCallback,
+  cutted,
+  video,
+  handleVideoChange
 }: AddVideoCardContainerProps) {
 
   const [createCard, { data, loading, error }] = useMutation(CREATE_CARD);
 
-  const [video, setVideo] = useState<File | null>(null);
+  // const [video, setVideo] = useState<File | null>(null);
 
   const schema = z.object({
     title: z.string().min(1, "O Título é obrigatório"),
@@ -37,7 +44,6 @@ export function AddVideoCardContainer({
   type FormData = z.infer<typeof schema>;
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
     
     const reader = new FileReader();
     reader.onload = () => {
@@ -91,8 +97,12 @@ export function AddVideoCardContainer({
           errors={errors.title?.message as string}
           label="titulo"
           video={video}
-          handleVideoChange={(file) => setVideo(file)}
+          cutted={cutted}
+          handleVideoChange={handleVideoChange}
+          width={370}
+          height={660}
           {...register("title")}
+          
         />
 
 

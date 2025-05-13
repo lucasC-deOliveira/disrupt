@@ -17,7 +17,7 @@
     if (months > 0) result.push(`${months} M`);
     if (days > 0) result.push(`${days} D`);
     if (hours > 0) result.push(`${hours} H`);
-    if (minutes > 0) result.push(`${minutes} Min`);
+    if (minutes > 0) result.push(`${minutes} m`);
 
     // Retorna a string formatada
     return result.join(", ");

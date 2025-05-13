@@ -52,6 +52,7 @@ export default function CardComponentVideo({ card, evaluateAnswer }: CardCompone
                     playing={true}
                     controls={true}
                     loop={true}
+                    playbackRate={2}
                 />
 
             </div>

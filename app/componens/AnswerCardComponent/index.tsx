@@ -25,7 +25,7 @@ export const AnswerCardComponent = ({  evaluateAnswer, card }: AnswerCardCompone
     >
         <div className="flex items-center justify-center flex-col  ">
             <span
-                className="block text-sm"
+                className="block text-xs"
                 style={{ color: theme.color }}
             >
                 {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Very Hard" ? card.times : 1, "Very Hard"))}
@@ -43,7 +43,7 @@ export const AnswerCardComponent = ({  evaluateAnswer, card }: AnswerCardCompone
         </div>
         <div className="flex items-center justify-center flex-col">
             <span
-                className="block text-sm"
+                className="block text-xs"
                 style={{ color: theme.color }}
             >
                 {" "}
@@ -62,7 +62,7 @@ export const AnswerCardComponent = ({  evaluateAnswer, card }: AnswerCardCompone
         </div>
         <div className="flex items-center justify-center flex-col">
             <span
-                className="block text-sm"
+                className="block text-xs"
                 style={{ color: theme.color }}
             >
                 {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Normal" ? card.times : 1, "Normal"))}             </span>
@@ -80,7 +80,7 @@ export const AnswerCardComponent = ({  evaluateAnswer, card }: AnswerCardCompone
         </div>
         <div className="flex items-center justify-center flex-col ">
             <span
-                className="block text-sm"
+                className="block text-xs"
                 style={{ color: theme.color }}
             >
                 {formatTime(answerCardEvaluationTimeStrategy(card.evaluation == "Easy" ? card.times : 1, "Easy"))}             </span>

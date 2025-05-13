@@ -1,12 +1,16 @@
 "use client";
 import { useTheme } from "@/app/hooks/useTheme";
 import TextField from '@mui/material/TextField';
+import { IoMdClose } from "react-icons/io";
 
 interface AddVideoCardComponentProps {
   errors?: string;
   label: string;
   video: File | null;
-  handleVideoChange: (file: File) => void;
+  handleVideoChange: (file: File | null) => void;
+  cutted?: boolean;
+  width: number,
+  height: number
 }
 
 export function AddVideoCardComponent({
@@ -14,6 +18,9 @@ export function AddVideoCardComponent({
   label,
   video,
   handleVideoChange,
+  cutted,
+  width,
+  height,
   ...rest
 }: AddVideoCardComponentProps) {
   const { theme } = useTheme();
@@ -28,9 +35,9 @@ export function AddVideoCardComponent({
   return (
     <div className="flex justify-center items-center flex-col"
       style={{
-        width: 370,
-        minWidth: 370,
-        maxWidth: 370,
+        width: width,
+        minWidth: width,
+        maxWidth: width,
       }}
     >
       <div className="w-full">
@@ -39,11 +46,11 @@ export function AddVideoCardComponent({
           style={{
             borderColor: theme.color,
             color: theme.color,
-            width: 370,
-            height: 660,
-            minHeight: 660,
-            minWidth: 370,
-            maxWidth: 370,
+            width: width,
+            height: height,
+            minHeight: height,
+            minWidth: width,
+            maxWidth: width,
           }}>
           <TextField
             id={label}
@@ -90,12 +97,22 @@ export function AddVideoCardComponent({
                 className="w-full h-full rounded-md"
               />
             )}
-            <input
-              type="file"
-              accept="video/*"
-              className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-              onChange={handleFileChange}
-            />
+            {!cutted && (<button
+              className="absolute top-4 right-4 "
+              onClick={() => handleVideoChange(null)}
+            >
+              <IoMdClose className="w-4 h-4" style={{ fill: theme.color }} />
+            </button>)}
+
+            {!video && !cutted && (
+              <input
+                type="file"
+                accept="video/*"
+                className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                onChange={handleFileChange}
+              />
+            )}
+
           </div>
         </div>
       </div>
