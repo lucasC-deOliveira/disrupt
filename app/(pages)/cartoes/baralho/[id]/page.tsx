@@ -18,6 +18,7 @@ import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
 import { getDocById, syncFromServer, deleteDocById, syncDeckFromServerByDeckId } from "@/app/lib/pouchDb";
 import { FadeLoader } from "react-spinners";
+import { Textfit } from "react-textfit";
 
 interface Card {
   answer: string;
@@ -185,162 +186,171 @@ export default function Baralho({ params }: { params: Promise<{ id: string }> })
         message="Baralho removido com sucesso!"
       />
       <div
-        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 mt-8 "
+        className="rounded-md flex flex-col items-center justify-center  gap-8 m-auto col-span-6 lg:col-span-5 lg:col-start-4 xl:col-span-5 xl:col-start-4 mt-2 "
+        style={{
+          boxShadow: `0 0 10px ${theme.color}, 0 0 10px ${theme.color},0 0 40px rgba(0, 255, 255, 0.2), 0 0 30px ${theme.color}`,
+          transition: "box-shadow 0.3s ease ",
+          animation: "pulseNeon 2s infinite ease-in-out",
+        }}
       >
         <div
-          className=" border-2 rounded-md  pr-1  w-full bg-black"
-          style={{ borderColor: theme.color, height: 728 + "px" }}
+          className=" border-2 rounded-md  p-4 w-full bg-black"
+          style={{ borderColor: theme.color, }}
         >
-          <div
-            className=" border-2 rounded-md h-full  pr-1"
-            style={{ borderColor: theme.color }}
-          >
-            <div
-              className=" border-2 rounded-md h-full  p-4"
-              style={{ borderColor: theme.color }}
+
+          <div className="w-full flex flex-row-reverse justify-start gap-2">
+
+            <button
+              className=" w-22 p-2 border-2 rounded-md text-sm flex items-center gap-2 justify-center bg-black"
+              style={{ borderColor: theme.color, color: theme.color }}
+              type="button"
+              onClick={() => setDeleteModalIsOpen(true)}
             >
-              <div className="w-full flex justify-end gap-2">
-                <Link
-                  className=" w-22 p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
-                  style={{ borderColor: theme.color, color: theme.color }}
-                  href={`/cartoes/baralho/${id}/edit`}
-                >
-                  <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
-                  Editar
-                </Link>
-                <button
-                  className=" w-22 p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
-                  style={{ borderColor: theme.color, color: theme.color }}
-                  type="button"
-                  onClick={() => setDeleteModalIsOpen(true)}
-                >
-                  <FaRegTrashAlt className="w-6 h-6" style={{ fill: theme.color }} />
-                  Apagar
-                </button>
-              </div>
+              <FaRegTrashAlt className="w-6 h-6" style={{ fill: theme.color }} />
+              Apagar
+            </button>
 
-              <div className="flex w-full justify-end my-4">
-                <h6
-                  className="text-lg font-bold"
-                  style={{ color: theme.color }}
-                >
-                  CARTÕES {deck.cards?.length || 0}
-                </h6>
-              </div>
-              <div className="flex w-full items-center justify-center">
-                <div
-                  className="flex items-center justify-center  rounded-md border-2 mb-8"
-                  style={{ borderColor: theme.color, height: 300 + "px", width: 400 + "px" }}
-                >
-                  <Image
-                    src={deck.photo}
-                    alt="foto do baralho"
-                    width={400}
-                    height={200}
-                    className="w-full h-full rounded-md"
-                  />
-                </div>
-              </div>
-              <h2
-                className="text-center text-4xl font-bold mt-4 mb-4"
-                style={{ color: theme.color }}
-              >
-                {deck.title}
-              </h2>
+            <Link
+              className=" w-22 p-2 border-2 rounded-md text-sm flex items-center gap-2 justify-center bg-black"
+              style={{ borderColor: theme.color, color: theme.color }}
+              href={`/cartoes/baralho/${id}/edit`}
+            >
+              <LuPencilLine className="w-6 h-6" style={{ fill: theme.color }} />
+              Editar
+            </Link>
+            <Link
+              className="  p-2 border-2 rounded-md text-sm flex items-center gap-2 justify-center bg-black"
+              style={{ borderColor: theme.color, color: theme.color }}
+              href={`/cartoes/baralho/${id}/cartoes`}
+            >
+              {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
+              Abrir Deck
+            </Link>
 
-              <div className="flex w-full justify-between mb-12">
-                <div className="flex flex-col items-center justify-center">
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    Novos
-                  </h6>
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    {deck?.cards?.filter((card) => card.times === 0).length ||
-                      0}
-                  </h6>
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    Aprender
-                  </h6>
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    {deck?.cards?.filter(
-                      (card) =>
-                        (card.times > 0 &&
-                          dayjs(card.showDataTime).isBefore(dayjs()) &&
-                          card.evaluation == "Very Hard") ||
-                        card.evaluation == "Hard"
-                    ).length || 0}
-                  </h6>
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    Revisar
-                  </h6>
-                  <h6
-                    className="text-2xl font-bold"
-                    style={{ color: theme.color }}
-                  >
-                    {
-                      deck?.cards?.filter(
-                        (card) =>
-                          dayjs(card.showDataTime).isBefore(dayjs()) &&
-                          card.times > 0 &&
-                          (card.evaluation === "Normal" ||
-                            card.evaluation === "Easy")
-                      ).length
-                    }
-                  </h6>
-                </div>
+          </div>
 
-              </div>
-
-              <div className="w-full flex justify-between gap-1">
-
-                <Link
-                  className="  p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
-                  style={{ borderColor: theme.color, color: theme.color }}
-                  href={`/cartoes/baralho/${id}/cartoes`}
-                >
-                  {/* <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} /> */}
-                  Abrir Deck
-                </Link>
-                <Link
-                  className="  p-2 border-2 rounded-md text-lg flex items-center gap-2 justify-center bg-black"
-                  style={{ borderColor: theme.color, color: theme.color }}
-                  href={`/cartoes/baralho/${id}/cartao/add`}
-                >
-                  <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
-                  Adicionar Cartões
-                </Link>
-
-                <Link
-                  className="  p-2 border-2 rounded-md text-lg flex gap-2 items-center justify-center bg-black"
-                  style={{ borderColor: theme.color, color: theme.color }}
-                  href={`/cartoes/baralho/${id}/estudar`}
-                >
-                  <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
-                  Estudar
-                </Link>
-
-              </div>
-
+          <div className="flex w-full justify-end my-4">
+            <h6
+              className="text-sm font-bold"
+              style={{ color: theme.color }}
+            >
+              CARTÕES {deck.cards?.length || 0}
+            </h6>
+          </div>
+          <div className="flex w-full items-center justify-center">
+            <div
+              className="flex items-center justify-center  rounded-md border-2 mb-8"
+              style={{ borderColor: theme.color, height: 300 + "px", width: 400 + "px" }}
+            >
+              <Image
+                src={deck.photo}
+                alt="foto do baralho"
+                width={400}
+                height={200}
+                className="w-full h-full rounded-md"
+              />
             </div>
           </div>
+
+          <Textfit
+            mode="multi"
+            forceSingleModeWidth={false}
+            max={28}  // tamanho máximo da fonte desejado
+            min={26}
+            style={{
+              color: theme.color, whiteSpace: "normal",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              fontSize: 100,
+              marginTop: 12,
+              marginBottom: 24,
+              maxWidth: 400
+            }}
+            className="text-center font-bold"
+          >
+            {deck.title}
+          </Textfit>
+          <div className="flex gap-4 items-center justify-around mb-4 w-full ">
+            <div className="flex flex-col items-center justify-center">
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                Novos
+              </h6>
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                {deck?.cards?.filter((card) => card.times === 0).length ||
+                  0}
+              </h6>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                Aprender
+              </h6>
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                {deck?.cards?.filter(
+                  (card) =>
+                    (card.times > 0 &&
+                      dayjs(card.showDataTime).isBefore(dayjs()) &&
+                      card.evaluation == "Very Hard") ||
+                    card.evaluation == "Hard"
+                ).length || 0}
+              </h6>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                Revisar
+              </h6>
+              <h6
+                className="text-lg font-bold"
+                style={{ color: theme.color }}
+              >
+                {
+                  deck?.cards?.filter(
+                    (card) =>
+                      dayjs(card.showDataTime).isBefore(dayjs()) &&
+                      card.times > 0 &&
+                      (card.evaluation === "Normal" ||
+                        card.evaluation === "Easy")
+                  ).length
+                }
+              </h6>
+            </div>
+
+          </div>
+
+          <div className="w-full flex justify-center gap-4 mt-8">
+            <Link
+              className="  p-2 border-2 rounded-md text-sm flex items-center gap-2 justify-center bg-black"
+              style={{ borderColor: theme.color, color: theme.color }}
+              href={`/cartoes/baralho/${id}/cartao/add`}
+            >
+              <AiOutlinePlus className="w-8 h-8" style={{ fill: theme.color }} />
+              Adicionar Cartões
+            </Link>
+            <Link
+              className="  p-2 border-2 rounded-md text-sm flex gap-2 items-center justify-center bg-black"
+              style={{ borderColor: theme.color, color: theme.color }}
+              href={`/cartoes/baralho/${id}/estudar`}
+            >
+              <PiStudentFill className="w-8 h-8" style={{ fill: theme.color }} />
+              Estudar
+            </Link>
+
+          </div>
+
         </div>
 
       </div>

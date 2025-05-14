@@ -12,6 +12,8 @@ import { MdLibraryBooks } from "react-icons/md";
 import { BsValentine2 } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { getMidia } from "@/app/utils/getMidia";
+import { getDeckById } from "@/app/lib/pouchDb";
 
 interface Card {
   title: string;
@@ -24,16 +26,8 @@ interface Deck {
   id: string;
   photo: string;
   title: string;
-  cards: Card;
 }
 
-const GET_DECK_BY_ID = gql`
-  query GetDeckById($id: String!) {
-    getDeckById(id: $id) {
-      title
-    }
-  }
-`;
 
 const EDIT_DECK = gql`
   mutation EditDeck($data: EditDeckInput!) {
@@ -54,7 +48,7 @@ export default function EditarBaralho({ params }: { params: Promise<{ id: string
 
   const { replace } = useRouter();
 
-  const  id  = use(params).id;
+  const id = use(params).id;
 
   const { changePaths, changeTitle, changeBackButton } = useMyHeader();
 
@@ -62,24 +56,25 @@ export default function EditarBaralho({ params }: { params: Promise<{ id: string
 
   const [editDeck] = useMutation(EDIT_DECK);
 
-  const { loading, error, data, refetch } = useQuery(GET_DECK_BY_ID, {
-    variables: { id: id },
-  });
+
 
   useEffect(() => {
-    if (data) {
-      if (data?.getDeckById) {
-        const newDeck = data.getDeckById;
-        // console.log(newDeck.cards)
-        setPhoto(deck.photo);
+  getDeckById(id).then(deck => {
+      if (deck) {
         setTitle(deck.title);
-        setDeck(newDeck);
+        if (deck.photo)
+          setPhoto(deck.photo);
+
+        setDeck({
+          id,
+          photo: deck?.photo || "",
+          title: deck.title
+        });
       }
-      if (error?.message === "Failed to fetch") {
-        refetch();
-      }
-    }
-  }, [data, deck.photo, deck.title, error?.message, refetch]);
+    })
+
+
+  }, [getDeckById, id]);
 
   useEffect(() => {
     changeTitle("Cartões");

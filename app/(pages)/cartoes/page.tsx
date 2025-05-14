@@ -11,7 +11,8 @@ import { BiSolidHomeHeart } from "react-icons/bi";
 import dayjs from "dayjs";
 import { MdLibraryBooks } from "react-icons/md";
 import { BsFiletypeJson } from "react-icons/bs";
-import  { getAllDocs, syncFromServer } from '../../lib/pouchDb';
+import { getAllDocs, syncFromServer } from '../../lib/pouchDb';
+import { Textfit } from "react-textfit";
 
 
 interface Card {
@@ -152,7 +153,7 @@ export default function Cartoes() {
             <BsFiletypeJson />
             Exportar Cartoes
           </button>
-             <Link
+          <Link
             className=" w-44 p-2 border-2 rounded-md flex gap-4  items-center justify-center self-end bg-black"
             style={{ borderColor: theme.color, color: theme.color }}
             href="/cartoes/baralho/cadastrar/importar"
@@ -200,14 +201,14 @@ export default function Cartoes() {
               style={{ borderColor: theme.color }}
             >
               <div
-                className=" border-2 rounded-md h-full  pr-1"
+                className=" border-2 rounded-md h-full  pr-1 "
                 style={{ borderColor: theme.color }}
               >
                 <div
-                  className=" border-2 rounded-md h-full  p-4"
+                  className=" border-2 rounded-md h-full  p-4 relative"
                   style={{ borderColor: theme.color }}
                 >
-                  <div className="flex w-full justify-end mb-4">
+                  <div className="flex w-full justify-end mb-4 ">
                     <h6
                       className="text-sm md:text-md mb-4"
                       style={{ color: theme.color }}
@@ -227,13 +228,26 @@ export default function Cartoes() {
                       className="w-full h-full rounded-md"
                     />
                   </div>
-                  <h2
-                    className="text-center text-2xl md:text-4xl font-bold my-4"
-                    style={{ color: theme.color }}
+
+                  <Textfit
+                    mode="multi"
+                    forceSingleModeWidth={false}
+                    max={28}  // tamanho máximo da fonte desejado
+                    min={26}
+                    style={{
+                      color: theme.color, whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                      fontSize: 100,
+                      marginTop: 12,
+                      marginBottom: 80,
+                      maxWidth: 400
+                    }}
+                    className="text-center font-bold"
                   >
                     {deck.title}
-                  </h2>
-                  <div className="flex w-full justify-between gap-2 md:gap-4 ">
+                  </Textfit>
+                  <div className="flex w-full justify-around gap-2 md:gap-4 absolute bottom-0 left-0 mb-4">
                     <div className="flex flex-col items-center justify-center">
                       <h6
                         className="text-sm md:text-md"
